@@ -1,9 +1,0 @@
-submodule test!
-
-Hello from the AWS instance!
-
-Hi!
-
-Cozzy says "afterwards"
-
-Hello Ezra!
