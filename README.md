@@ -6,4 +6,4 @@ The AWS server will (if it is running) upon a push action which updates the remo
 
 Not sure what will happen if someone pushes to this repo while the server is running files though :|
 
-
+Another warning: uncommited changes on the server could potentially be overwritten when this repository has a new push.
