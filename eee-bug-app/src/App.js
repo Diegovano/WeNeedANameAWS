@@ -1,75 +1,106 @@
-// // client/src/App.js
-// import React, { useState } from "react";
-// import TableComp from './TableComp';
-// //App is a React Function Component
-// //Read about it, and React Components in general, here:
-// //https://www.w3schools.com/REACT/react_components.asp
-// function App() {
+import React, { Component, useState } from "react";
+import { Stage, Layer, Rect } from "react-konva";
+import "./styles.css";
 
-//   const [tableData33, updateTable33] = useState([[]]);
-//   //Get initial input from the server
-//   //Whenever App is invoked
-//   //a 'side effect' is that
-//   //the initial table data is fetched from the server
-//   //useEffect is a hook used to associate such 'side effects'
-//   //with components
-//   React.useEffect(() => {
-//     ///See CORS
-//     fetch("http://localhost:3001/tableData33/")
-//       .then((res) => res.json())
-//       .then((data) => updateTable33(data.tableData33))
-//       .catch((err) => alert(err)
-//       );
-//   }, [updateTable33]);
+const HEIGHT = 15,
+  WIDTH = 15,
+  RECT_SIZE = Math.min(window.innerHeight, window.innerWidth) / Math.max(HEIGHT, WIDTH);
 
-//   //handleClick is our event handler for the button click
-//   const handleClick = (updateMethod) => {
-//     fetch("http://localhost:3001/tableData33/")
-//       .then((res) => res.json())
-//       .then((data) => updateMethod(data.tableData33))
-//       .catch((err) => alert(err)
-//       // .finally(alert('test'))
-//       );
-//   };
-//   return (
-//     <div className="App">
-//       <TableComp td={tableData33} />
-//       <button onClick={() => handleClick(updateTable33)}>Randomize
-//         ages</button>
-//     </div>
-//   );
-// }
-// export default App;
-// client/src/App.js
-import React, {useState} from "react";
-import TableComp from './TableComp';
-//App is a React Function Component
-//Read about it, and React Components in general, here:
-//https://www.w3schools.com/REACT/react_components.asp
-function App() {
- const [tableData33, updateTable33] = useState(
- [
- ["Ed", 19, "Male"],
- ["Mia", 19, "Female"],
- ["Max", 25, "Male"]
- ]); //useState hooks tableData33 to the state
-  //It also provides a callback updateTable33
- //which must be invoked to transmit changes to the state
- ///Randomize ages between 15 and 50
- function randomize(){
-  return (
-  [
-  [tableData33[0][0],15 + Math.floor(Math.random() * 35),tableData33[0][2]],
-  [tableData33[1][0],15 + Math.floor(Math.random() * 35),tableData33[1][2]],
-  [tableData33[2][0],15 + Math.floor(Math.random() * 35),tableData33[2][2]]
-  ]
-  );
+const _range = (n) => [...Array(n).keys()];
+
+function useData(){
+  const [maze, updateMaze] = useState([[]]);
+  React.useEffect(() => {
+  fetch("http://localhost:3001/mazeQuery/")
+    .then((res) => res.json())
+    .then((data) => alert(JSON.stringify(data)))
+    .catch((err) => alert(err));
+}, []);
+
+  return maze;
+}
+
+function MazeComponent() {
+  const maze = useData();
+  let data = JSON.stringify(maze)
+  console.log(data)
+
+  // Rest of the component's code
+
+  return <div>{JSON.stringify(maze)}</div>;
+}
+
+
+
+
+const _generate = (height, width) => {
+  
+  // React.useEffect(() => {
+  //   fetch("http://localhost:3001/mazeQuery/")
+  //     .then((res) => res.json())
+  //     .then((data) => alert(JSON.stringify(data)))
+  //     .catch((err) => alert(err));
+  // }, []);
+
+  const maze = {};
+
+  _range(height).forEach((y) => {
+    _range(width).forEach((x) => {
+      maze[`${x}-${y}`] = Math.random() < 0.3;
+    });
+  });
+
+  return maze;
+};
+
+class Maze extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      height: HEIGHT,
+      width: WIDTH,
+      maze: _generate(HEIGHT, WIDTH)
+    };
+
+    this.handleClickGenerate = this.handleClickGenerate.bind(this);
   }
-  return (
-  <div className="App">
-  <TableComp td = {tableData33}/>
-  <button onClick={() => updateTable33(randomize())}>Randomize ages</button>
-  </div>
-  );
- }
- export default App;
+
+  handleClickGenerate(event) {
+    this.setState({ maze: _generate(HEIGHT, WIDTH) });
+  }
+
+  render() {
+    return (
+      <div>
+        <Stage width={WIDTH * RECT_SIZE} height={HEIGHT * RECT_SIZE}>
+          <Layer>
+            {_range(this.state.height).map((y) =>
+              _range(this.state.width).map((x) => (
+                <Rect
+                  key={`${x}-${y}`}
+                  x={x * RECT_SIZE}
+                  y={y * RECT_SIZE}
+                  width={RECT_SIZE}
+                  height={RECT_SIZE}
+                  fill={this.state.maze[`${x}-${y}`] ? "grey" : "white"}
+                  stroke="black"
+                  strokeWidth={1}
+                />
+              ))
+            )}
+          </Layer>
+        </Stage>
+        <input
+          type="button"
+          value="Regenerate"
+          onClick={this.handleClickGenerate}
+        />
+      </div>
+    );
+  }
+}
+
+// export default App;
+export default function App() {
+  return <Maze />, <MazeComponent />;
+}
