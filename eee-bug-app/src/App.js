@@ -1,6 +1,7 @@
-import React, { Component, useState } from "react";
+import React, { Component, useState, useRef } from "react";
 import { Stage, Layer, Rect } from "react-konva";
 import "./styles.css";
+import {useCanvas} from "./Canvas";
 
 const HEIGHT = 15,
   WIDTH = 15,
@@ -11,9 +12,9 @@ const coordinates = {};
 
 
 function useData() {
-  const [NID, setNID] = useState(null);
-  const [X_Coord, setXCoord] = useState(null);
-  const [Y_Coord, setYCoord] = useState(null);
+  const [NID, setNID] = useState([]);
+  const [X_Coord, setXCoord] = useState([]);
+  const [Y_Coord, setYCoord] = useState([]);
   const [coordinates, setCoordinates] = useState({});
   
 
@@ -23,10 +24,11 @@ function useData() {
       .then((data) => {
         console.log(data.length)
         for(let i=0; i<data.length; i++){
-            setNID(data[i].NID);
-            setXCoord(data[i].X_Coord);
-            setYCoord(data[i].Y_Coord);
-            setCoordinates({ x: data[i].X_Coord, y: data[i].Y_Coord });
+            setNID(data[0].NID);
+            setXCoord(data[0].X_Coord);
+            setYCoord(data[0].Y_Coord);
+
+            setCoordinates({ x: data[0].X_Coord, y: data[0].Y_Coord });
         }
       })
       .catch((err) => alert(err));
@@ -37,14 +39,34 @@ function useData() {
 
 function MazeComponent() {
   const { NID, X_Coord, Y_Coord } = useData();
+  const [ coordinates, setCoordinates, canvasRef, canvasWidth, canvasHeight ] = useCanvas();
 
+  
+
+  const handleCanvasClick=(event)=>{
+    // on each click get current mouse location 
+    const currentCoord = { x: event.clientX, y: event.clientY };
+    // add the newest mouse location to an array in state 
+    setCoordinates([...coordinates, currentCoord]);
+  };
+
+  const handleClearCanvas=(event)=>{
+    setCoordinates([]);
+  };
 
   return (
-    <div>
-      <div>NID: {NID}</div>
-      <div>X_Coord: {X_Coord}</div>
-      <div>Y_Coord: {Y_Coord}</div>
-    </div>
+    <main className="App-main" >
+      <canvas 
+        className="App-canvas"
+        ref={canvasRef}
+        width={canvasWidth}
+        height={canvasHeight}
+        onClick={handleCanvasClick} />
+
+      <div className="button" >
+        <button onClick={handleClearCanvas} > CLEAR </button>
+      </div>
+    </main>
   );
 }
 
