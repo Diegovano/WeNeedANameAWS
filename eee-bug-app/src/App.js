@@ -1,71 +1,70 @@
 import React, { Component, useState, useRef } from "react";
-import { Stage, Layer, Rect } from "react-konva";
 import "./styles.css";
-import {useCanvas} from "./Canvas";
+import { useCanvas } from "./Canvas";
 
-const HEIGHT = 15,
-  WIDTH = 15,
-  RECT_SIZE = Math.min(window.innerHeight, window.innerWidth) / Math.max(HEIGHT, WIDTH);
-
-const _range = (n) => [...Array(n).keys()];
-const coordinates = {};
 
 
 function useData() {
   const [NID, setNID] = useState([]);
   const [X_Coord, setXCoord] = useState([]);
   const [Y_Coord, setYCoord] = useState([]);
-  const [coordinates, setCoordinates] = useState({});
-  
+  const [coordinates, setCoordinates] = useState([]);
+  var myCoord = []
+
 
   React.useEffect(() => {
     fetch("http://localhost:3001/mazeQuery/")
       .then((res) => res.json())
       .then((data) => {
-        console.log(data.length)
-        for(let i=0; i<data.length; i++){
-            setNID(data[0].NID);
-            setXCoord(data[0].X_Coord);
-            setYCoord(data[0].Y_Coord);
-
-            setCoordinates({ x: data[0].X_Coord, y: data[0].Y_Coord });
-        }
+        setNID(data.map(item => item.NID));
+        setXCoord(data.map(item => item.X_Coord));
+        setYCoord(data.map(item => item.Y_Coord));
+        setCoordinates(data.map(item => ({ x: item.X_Coord, y: item.Y_Coord })));
       })
       .catch((err) => alert(err));
   }, []);
-  console.log(coordinates)
-  return { NID, X_Coord, Y_Coord, coordinates };
+  const coordData = coordinates.length > 0 ? coordinates : [];
+  return [ NID, X_Coord, Y_Coord, coordData ];
 }
 
 function MazeComponent() {
-  const { NID, X_Coord, Y_Coord } = useData();
-  const [ coordinates, setCoordinates, canvasRef, canvasWidth, canvasHeight ] = useCanvas();
+  const [ NID, X_Coord, Y_Coord, coordData ] = useData();
+  console.log(coordData)
+  const [coordinates, setCoordinates, canvasRef, canvasWidth, canvasHeight] = useCanvas();
 
-  
 
-  const handleCanvasClick=(event)=>{
+
+  const handleCanvasClick = (event) => {
     // on each click get current mouse location 
     const currentCoord = { x: event.clientX, y: event.clientY };
     // add the newest mouse location to an array in state 
     setCoordinates([...coordinates, currentCoord]);
   };
 
-  const handleClearCanvas=(event)=>{
+  const handleClearCanvas = () => {
     setCoordinates([]);
   };
 
   return (
     <main className="App-main" >
-      <canvas 
+      {/* <canvas
         className="App-canvas"
         ref={canvasRef}
         width={canvasWidth}
         height={canvasHeight}
         onClick={handleCanvasClick} />
-
       <div className="button" >
         <button onClick={handleClearCanvas} > CLEAR </button>
-      </div>
+      </div> */}
+      <div>
+      {coordData.map((item, index) => (
+        
+        <div key={index}>
+          <p>X_Coord: {item.x}</p>
+          <p>Y_Coord: {item.y}</p>
+        </div>
+      ))}
+    </div>
     </main>
   );
 }
