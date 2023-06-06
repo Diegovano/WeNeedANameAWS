@@ -1,17 +1,16 @@
 .App {
     font-family: sans-serif;
     text-align: center;
+    background-color: black;
   }
 
-#myCanvas {
-  border:1px solid #000000
-}
+
 
 .App-main{
   background-color: rgb(50, 4, 83);
-  padding: 5px;
-  max-height: 85vh;
-  max-width: 85vw;
+  padding: 20px;
+  max-height: 90vh;
+  max-width: 90vw;
 
 }
 
