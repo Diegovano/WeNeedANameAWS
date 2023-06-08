@@ -2,7 +2,10 @@ const express = require("express");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const PORT = process.env.PORT || 3001;
+const path = require('path')
 const app = express();
+
+app.use(express.static(path.resolve(__dirname, './eee-bug-app/build')));
 
 app.use(bodyParser.json());
 
@@ -72,6 +75,10 @@ app.get("/api/truncate", (req, res) => {
     con.query("TRUNCATE TABLE Nodes", (err, result) => {
         if (err) throw err;
     })
+})
+
+app.get('*', (req,res) => {
+    res.sendFile(path.resolve(__dirname, './eee-bug-app/build', 'index.html'));
 })
 
 
