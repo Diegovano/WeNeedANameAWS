@@ -6,7 +6,7 @@ function useData() {
   const [coordinates, setCoordinates] = useState([]);
 
   const fetchData = () => {
-    fetch("http://localhost:3001/mazeQuery")
+    fetch("http://54.82.44.87:3001/mazeQuery")
       .then((res) => res.json())
       .then((data) => {
         setCoordinates(data.map(item => ({ x: item.X_Coord, y: item.Y_Coord })));
@@ -27,7 +27,7 @@ function useData() {
 }
 
 function deleteData() {
-  return fetch("http://localhost:3001/api/truncate");
+  return fetch("http://54.82.44.87:3001/api/truncate");
 }
 
 function MazeComponent() {
