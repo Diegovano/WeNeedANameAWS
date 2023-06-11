@@ -220,7 +220,7 @@ app.get('/beacon', (req, res) => {
             { x: intersectionX3, y: intersectionY3 },
         ];
     }
-
+  
     // Helper function to calculate circle from 3 points
     function circleFromPoints(p1, p2, p3) {
         const x1 = p1.x;
