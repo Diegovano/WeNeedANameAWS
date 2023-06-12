@@ -110,6 +110,7 @@ let coordC = { x: 14, y: 10 }
 
 // Route to handle beacon distance readings
 app.get('/beacon', (req, res) => {
+    console.log("GET request received for beacon");
     console.log(req.query)
     beaconsAngles = []
     const D1 = req.query.distance1;
