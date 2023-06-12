@@ -257,7 +257,7 @@ app.get('/beacon', (req, res) => {
 
 
 app.get('/*', (req,res) => {
-    res.sendFile(path.resolve(__dirname, './eee-bug-app/build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, '/eee-bug-app/build', 'index.html'));
 })
 
 
