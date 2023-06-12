@@ -9,7 +9,7 @@ const app = express();
 app.use(express.static(path.resolve(__dirname, './eee-bug-app/build')));
 
 app.use(bodyParser.json());
-
+  
 app.use(cors({
     origin: '*'
 }));
