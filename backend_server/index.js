@@ -258,8 +258,8 @@ app.get('/beacon', (req, res) => {
     console.log("X #1: "+firstIntersection.x)
     console.log("Y #1: "+firstIntersection.y)
     let NID = 1; 
-    let X_Coord = firstIntersection.x;
-    let Y_Coord = firstIntersection.y;
+    let X_Coord = parseInt(firstIntersection.x);
+    let Y_Coord = parseInt(firstIntersection.y);
 
     con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
     [NID, X_Coord, Y_Coord], (err, result) => {
