@@ -266,7 +266,7 @@ app.get('/beacon', (req, res) => {
 
     });
 
-    res.send('Beacon reading received');
+    //res.send('Beacon reading received');
     const responseData = {
         NID: parseInt(NID),
         X_Coord: parseInt(X_Coord),
