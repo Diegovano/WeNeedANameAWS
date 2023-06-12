@@ -254,6 +254,9 @@ app.get('/beacon', (req, res) => {
 
     // Testing purposes:
     const firstIntersection = intersections[0];
+    console.log("Intersection #1: "+firstIntersection)
+    console.log("X #1: "+firstIntersection.x)
+    console.log("Y #1: "+firstIntersection.y)
     let NID = 1; 
     let X_Coord = firstIntersection.x;
     let Y_Coord = firstIntersection.y;
