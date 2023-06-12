@@ -252,12 +252,25 @@ app.get('/beacon', (req, res) => {
     console.log(intersections)
     console.log(confirmation)
 
+    // Testing purposes:
+    let NID = 1; 
+    let X_Coord = intersections[0].x;
+    let Y_Coord = intersections[0].y;
+
+    con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
+    [NID, X_Coord, Y_Coord], (err, result) => {
+        if (err) {
+            console.log(err)
+        }
+
+    });
+
     res.send('Beacon reading received');
 });
 
 
 app.get('/*', (req,res) => {
-    res.sendFile(path.resolve(__dirname, '/eee-bug-app/build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, './eee-bug-app/build', 'index.html'));
 })
 
 
