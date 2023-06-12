@@ -14,6 +14,7 @@ function useData() {
       .catch((err) => alert(err));
   };
 
+    
   useEffect(() => {
     fetchData();
     // Set interval to fetch data every 3000 milliseconds
