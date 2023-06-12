@@ -215,8 +215,7 @@ app.get('/beacon', (req, res) => {
 
         return [
             { x: intersectionX2, y: intersectionY2 },
-            // TODO : REMOVE FOLLOWING COMMENTING
-            //{ x: intersectionX3, y: intersectionY3 },
+            { x: intersectionX3, y: intersectionY3 },
         ];
     }
   
@@ -254,9 +253,10 @@ app.get('/beacon', (req, res) => {
     console.log(confirmation)
 
     // Testing purposes:
+    const firstIntersection = intersections[0];
     let NID = 1; 
-    let X_Coord = intersections.x;
-    let Y_Coord = intersections.y;
+    let X_Coord = firstIntersection.x;
+    let Y_Coord = firstIntersection.y;
 
     con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
     [NID, X_Coord, Y_Coord], (err, result) => {
