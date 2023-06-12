@@ -4,7 +4,7 @@ import { useCanvas } from "./Canvas";
 
 function useData() {
   const [coordinates, setCoordinates] = useState([]);
-
+  
   const fetchData = () => {
     fetch("http://54.82.44.87:3001/mazeQuery")
       .then((res) => res.json())
