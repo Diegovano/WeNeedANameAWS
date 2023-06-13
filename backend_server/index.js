@@ -83,6 +83,7 @@ let isPressed = 0;
 app.get("/api/triangulate", (req, res) => {
     isPressed = 1;
     res.json(isPressed);
+    isPressed = 0;
 });
 
 

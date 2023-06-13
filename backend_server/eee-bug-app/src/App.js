@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./styles.css";
 import { useCanvas } from "./Canvas";
+import TriangulateButton from "./TriangulateButton";
 
 function useData() {
   const [coordinates, setCoordinates] = useState([]);
@@ -56,8 +57,9 @@ function MazeComponent() {
   return (
     <main className="App-main" >
       <button onClick={deleteData}>Delete Data</button>
-      <button onClick={Triangulate}>Triangulate</button>
-      <p>isPressed: {isPressed}</p>
+      {/* <button onClick={Triangulate}>Triangulate</button>
+      <p>isPressed: {isPressed}</p> */}
+       <TriangulateButton />
       <canvas
         className="App-canvas"
         ref={canvasRef}
