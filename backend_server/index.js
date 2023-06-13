@@ -122,12 +122,11 @@ app.get("/api/flag", (req, res) => {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Initialize variables
-let angleOffset = 45;
 let thetaAB, thetaBC, thetaAC;
 let hAB, hBC, hAC;
 let coordA = { x: 1, y: 1 }
-let coordB = { x: 1, y: 10 }
-let coordC = { x: 14, y: 10 }
+let coordB = { x: 1, y: 88 }
+let coordC = { x: 88, y: 112 }
 
 // Route to handle beacon distance readings
 app.get('/beacon', (req, res) => {
@@ -143,8 +142,9 @@ app.get('/beacon', (req, res) => {
     const rotationNumber3 = req.query.rotation3;
 
     function alpha(D, rotation) {
-        const angle = (D / 340) * 24
-        return beaconsAngles.push((rotation * angleOffset) + angle);
+        D -= 320;
+        const angle = (D / 320) * 24;
+        return beaconsAngles.push((rotation) + angle);
     }
 
     alpha(D1, rotationNumber1);
