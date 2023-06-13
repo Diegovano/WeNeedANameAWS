@@ -133,13 +133,13 @@ app.get('/beacon', (req, res) => {
     console.log("GET request received for beacon");
     console.log(req.query)
     beaconsAngles = []
-    const D1 = req.query.distance1;
-    const D2 = req.query.distance2;
-    const D3 = req.query.distance3;
+    const D1 = Number(req.query.distance1);
+    const D2 = Number(req.query.distance2);
+    const D3 = Number(req.query.distance3);
 
-    const rotationNumber1 = req.query.rotation1;
-    const rotationNumber2 = req.query.rotation2;
-    const rotationNumber3 = req.query.rotation3;
+    const rotationNumber1 = Number(req.query.rotation1);
+    const rotationNumber2 = Number(req.query.rotation2);
+    const rotationNumber3 = Number(req.query.rotation3);
 
     function alpha(D, rotation) {
         D -= 320;
