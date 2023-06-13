@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./styles.css";
 import { useCanvas } from "./Canvas";
-//import TriangulateButton from "./TriangulateButton";
 
 function useData() {
   const [coordinates, setCoordinates] = useState([]);
@@ -41,7 +40,7 @@ function sendTriangulateRequest() {
     },
     body: JSON.stringify({ value: 1 })
   })
-    .then(response => {
+    .then(_response => {
       console.log("Triangulate request sent.");
     })
     .catch(error => {
@@ -58,7 +57,7 @@ function sendResetRequest() {
     },
     body: JSON.stringify({ value: 0 })
   })
-    .then(response => {
+    .then(_response => {
       console.log("Reset request sent.");
     })
     .catch(error => {
@@ -88,9 +87,6 @@ function MazeComponent() {
     <main className="App-main" >
       <button onClick={deleteData}>Delete Data</button>
       <button onClick={handleClick}>Triangulate</button>
-      {/* <button onClick={Triangulate}>Triangulate</button>
-      <p>isPressed: {isPressed}</p> */}
-       {/* <TriangulateButton /> */}
       <canvas
         className="App-canvas"
         ref={canvasRef}

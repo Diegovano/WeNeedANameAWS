@@ -2,7 +2,6 @@ const express = require("express");
 const cors = require('cors');
 const bodyParser = require('body-parser');
 const PORT = process.env.NODE_PORT || 3001;
-const env = process.env;
 const path = require('path')
 const app = express();
 
@@ -78,29 +77,22 @@ app.get("/api/truncate", (_req, _res) => {
     })
 })
 
-// let isPressed = 0;
-// //Triangulate on demand 
-// app.get("/api/triangulate", (_req, res) => {
-//     isPressed = 1;
-//     res.json(isPressed);
-//     isPressed = 0;
-// });
 
 // Initialize flag value
 let flag = 0;
 
 // Endpoint to receive triangulate request
 app.post("/api/triangulate", (req, res) => {
-  flag = 1;
-  console.log("Triangulate request received. Setting flag to 1.");
-  res.sendStatus(200);
+    flag = 1;
+    console.log("Triangulate request received. Setting flag to 1.");
+    res.sendStatus(200);
 });
 
 // Endpoint to receive reset request
 app.post("/api/reset", (req, res) => {
-  flag = 0;
-  console.log("Reset request received. Setting flag to 0.");
-  res.sendStatus(200);
+    flag = 0;
+    console.log("Reset request received. Setting flag to 0.");
+    res.sendStatus(200);
 });
 
 // Endpoint to get the current flag value
