@@ -106,9 +106,9 @@ app.post("/api/reset", (req, res) => {
 // Endpoint to get the current flag value
 app.get("/api/flag", (req, res) => {
     res.json({ flag });
-    if (flag == 1){
-        flag = 0;
-    }
+    // if (flag == 1){
+    //     flag = 0;
+    // }
 });
 
 
