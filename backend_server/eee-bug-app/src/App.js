@@ -32,11 +32,6 @@ function deleteData() {
   return fetch("http://54.82.44.87:3001/api/truncate");
 }
 
-document.addEventListener("DOMContentLoaded", function() {
-
-// Attach event listener to the button
-const button = document.querySelector("#triangulateButton");
-
 // Function to send a request to /api/triangulate with value 1
 function sendTriangulateRequest() {
   fetch("http://54.82.44.87:3001/api/triangulate", {
@@ -74,18 +69,11 @@ function sendResetRequest() {
 // Function to handle button click
 function handleClick() {
   sendTriangulateRequest();
-  console.log('Clicked!')
-
   setTimeout(() => {
     sendResetRequest();
   }, 3000);
+  return console.log('Clicked!')
 }
-
-if (button) {
-  button.addEventListener("click", handleClick);
-}
-
-});
 
 function MazeComponent() {
 
@@ -99,7 +87,7 @@ function MazeComponent() {
   return (
     <main className="App-main" >
       <button onClick={deleteData}>Delete Data</button>
-      <button id="triangulateButton">Triangulate</button>
+      <button onClick={handleClick}>Triangulate</button>
       {/* <button onClick={Triangulate}>Triangulate</button>
       <p>isPressed: {isPressed}</p> */}
        {/* <TriangulateButton /> */}
