@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./styles.css";
 import { useCanvas } from "./Canvas";
-import TriangulateButton from "./TriangulateButton";
+//import TriangulateButton from "./TriangulateButton";
 
 function useData() {
   const [coordinates, setCoordinates] = useState([]);
@@ -32,18 +32,60 @@ function deleteData() {
   return fetch("http://54.82.44.87:3001/api/truncate");
 }
 
-function Triangulate() {
-  const [isPressed, setIsPressed] = useState(0);
-  const handleTriangulateClick = () => {
-    fetch("http://54.82.44.87:3001/api/triangulate")
-      .then((res) => res.json())
-      .then((data) => {
-        setIsPressed(data);
-      })
-      .catch((err) => console.log(err));
-  };
-  return isPressed;
+document.addEventListener("DOMContentLoaded", function() {
+
+// Attach event listener to the button
+const button = document.querySelector("#triangulateButton");
+
+// Function to send a request to /api/triangulate with value 1
+function sendTriangulateRequest() {
+  fetch("http://54.82.44.87:3001/api/triangulate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ value: 1 })
+  })
+    .then(response => {
+      console.log("Triangulate request sent.");
+    })
+    .catch(error => {
+      console.error("Error sending triangulate request:", error);
+    });
 }
+
+// Function to send a request to reset the value to 0
+function sendResetRequest() {
+  fetch("http://54.82.44.87:3001/api/reset", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ value: 0 })
+  })
+    .then(response => {
+      console.log("Reset request sent.");
+    })
+    .catch(error => {
+      console.error("Error sending reset request:", error);
+    });
+}
+
+// Function to handle button click
+function handleClick() {
+  sendTriangulateRequest();
+  console.log('Clicked!')
+
+  setTimeout(() => {
+    sendResetRequest();
+  }, 3000);
+}
+
+if (button) {
+  button.addEventListener("click", handleClick);
+}
+
+});
 
 function MazeComponent() {
 
@@ -57,9 +99,10 @@ function MazeComponent() {
   return (
     <main className="App-main" >
       <button onClick={deleteData}>Delete Data</button>
+      <button id="triangulateButton">Triangulate</button>
       {/* <button onClick={Triangulate}>Triangulate</button>
       <p>isPressed: {isPressed}</p> */}
-       <TriangulateButton />
+       {/* <TriangulateButton /> */}
       <canvas
         className="App-canvas"
         ref={canvasRef}

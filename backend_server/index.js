@@ -31,8 +31,8 @@ con.connect(function (err) {
     console.log("Successfully connected to the database...\n");
 });
 
-app.get("/mazeQuery", (req, res) => {
-    con.query("SELECT * FROM Nodes", function (err, result, fields) {
+app.get("/mazeQuery", (_req, res) => {
+    con.query("SELECT * FROM Nodes", function (err, result, _fields) {
         if (err) throw err;
         res.json(result)
     });
@@ -55,7 +55,7 @@ app.get("/testQuery", (req, res) => {
     }
 
     con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
-        [NID, X_Coord, Y_Coord], (err, result) => {
+        [NID, X_Coord, Y_Coord], (err, _result) => {
             if (err) {
                 console.log(err)
             }
@@ -72,18 +72,40 @@ app.get("/testQuery", (req, res) => {
 });
 
 //Delete DB
-app.get("/api/truncate", (req, res) => {
-    con.query("TRUNCATE TABLE Nodes", (err, result) => {
+app.get("/api/truncate", (_req, _res) => {
+    con.query("TRUNCATE TABLE Nodes", (err, _result) => {
         if (err) throw err;
     })
 })
 
-let isPressed = 0;
-//Triangulate on demand 
-app.get("/api/triangulate", (req, res) => {
-    isPressed = 1;
-    res.json(isPressed);
-    isPressed = 0;
+// let isPressed = 0;
+// //Triangulate on demand 
+// app.get("/api/triangulate", (_req, res) => {
+//     isPressed = 1;
+//     res.json(isPressed);
+//     isPressed = 0;
+// });
+
+// Initialize flag value
+let flag = 0;
+
+// Endpoint to receive triangulate request
+app.post("/api/triangulate", (req, res) => {
+  flag = 1;
+  console.log("Triangulate request received. Setting flag to 1.");
+  res.sendStatus(200);
+});
+
+// Endpoint to receive reset request
+app.post("/api/reset", (req, res) => {
+  flag = 0;
+  console.log("Reset request received. Setting flag to 0.");
+  res.sendStatus(200);
+});
+
+// Endpoint to get the current flag value
+app.get("/api/flag", (req, res) => {
+  res.json({ flag });
 });
 
 
@@ -270,7 +292,7 @@ app.get('/beacon', (req, res) => {
     let Y_Coord = parseInt(firstIntersection.y);
 
     con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
-        [NID, X_Coord, Y_Coord], (err, result) => {
+        [NID, X_Coord, Y_Coord], (err, _result) => {
             if (err) {
                 console.log(err)
             }
@@ -288,7 +310,7 @@ app.get('/beacon', (req, res) => {
 });
 
 
-app.get('/*', (req, res) => {
+app.get('/*', (_req, res) => {
     res.sendFile(path.resolve(__dirname, './eee-bug-app/build', 'index.html'));
 })
 

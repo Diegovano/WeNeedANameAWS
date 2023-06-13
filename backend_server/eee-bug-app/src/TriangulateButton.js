@@ -4,7 +4,7 @@ function TriangulateButton() {
   const [isPressed, setIsPressed] = useState(0);
 
   const handleTriangulateClick = () => {
-    fetch("http://54.82.44.87:3001/api/click")
+    fetch("http://54.82.44.87:3001/api/triangulate")
       .then((res) => res.json())
       .then((data) => {
         setIsPressed(data);
