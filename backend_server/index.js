@@ -9,7 +9,7 @@ const app = express();
 app.use(express.static(path.resolve(__dirname, './eee-bug-app/build')));
 
 app.use(bodyParser.json());
-  
+
 app.use(cors({
     origin: '*'
 }));
@@ -77,6 +77,13 @@ app.get("/api/truncate", (req, res) => {
         if (err) throw err;
     })
 })
+
+let isPressed = 0;
+//Triangulate on demand 
+app.get("/api/triangulate", (req, res) => {
+    isPressed = 1;
+    res.json(isPressed);
+});
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -165,17 +172,17 @@ app.get('/beacon', (req, res) => {
 
         // Calculate the length of vector AC
         const lengthAC = Math.sqrt(vectorAC.x ** 2 + vectorAC.y ** 2);
-        
+
         // Normalize the vector AC to get the unit vector
         const unitVectorAC = { x: vectorAC.x / lengthAC, y: vectorAC.y / lengthAC };
-        
+
         // Calculate the perpendicular vector to AC
         const perpendicularVector = { x: -unitVectorAC.y, y: unitVectorAC.x };
-        
+
         // Calculate the midpoint of AC
         const midpointX = (coordA.x + coordC.x) / 2;
         const midpointY = (coordA.y + coordC.y) / 2;
-        
+
         // Calculate the coordinates where the perpendicular line ends
         const perpendicularX = midpointX + (perpendicularVector.x * distance);
         const perpendicularY = midpointY + (perpendicularVector.y * distance);
@@ -218,7 +225,7 @@ app.get('/beacon', (req, res) => {
             { x: intersectionX3, y: intersectionY3 },
         ];
     }
-  
+
     // Helper function to calculate circle from 3 points
     function circleFromPoints(p1, p2, p3) {
         const x1 = p1.x;
@@ -254,20 +261,20 @@ app.get('/beacon', (req, res) => {
 
     // Testing purposes:
     const firstIntersection = intersections[0];
-    console.log("Intersection #1: "+firstIntersection)
-    console.log("X #1: "+firstIntersection.x)
-    console.log("Y #1: "+firstIntersection.y)
-    let NID = 1; 
+    console.log("Intersection #1: " + firstIntersection)
+    console.log("X #1: " + firstIntersection.x)
+    console.log("Y #1: " + firstIntersection.y)
+    let NID = 1;
     let X_Coord = parseInt(firstIntersection.x);
     let Y_Coord = parseInt(firstIntersection.y);
 
     con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
-    [NID, X_Coord, Y_Coord], (err, result) => {
-        if (err) {
-            console.log(err)
-        }
+        [NID, X_Coord, Y_Coord], (err, result) => {
+            if (err) {
+                console.log(err)
+            }
 
-    });
+        });
 
     //res.send('Beacon reading received');
     const responseData = {
@@ -280,7 +287,7 @@ app.get('/beacon', (req, res) => {
 });
 
 
-app.get('/*', (req,res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.resolve(__dirname, './eee-bug-app/build', 'index.html'));
 })
 
