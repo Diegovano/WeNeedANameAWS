@@ -192,11 +192,11 @@ app.get('/beacon', (req, res) => {
     KB = 1 / (COT_B - COT_ALPHA);
     KR = 1 / (COT_R - COT_BETA);
     KY = 1 / (COT_Y - COT_GAMMA);
-    K = KA + KB + KC;
+    K = KB + KR + KY;
 
     // Calculating final coordinates: 
-    E = (KB * EB + KR * ER + KY * EY);
-    N = (KB * NB + KR * NR + KY * NY);
+    E = (KB * EB + KR * ER + KY * EY)/K;
+    N = (KB * NB + KR * NR + KY * NY)/K;
 
     const currentPosition = { x: E, y: N };
     // Testing purposes:
