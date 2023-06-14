@@ -100,6 +100,13 @@ app.get("/api/flag", (req, res) => {
     res.json({ flag });
 });
 
+app.get("/LDR", (req, res) => {
+    const wallDistance = req.query.distance;
+    console.log("Distance from wall received. Current distance: "+wallDistance);
+    const responseData = {distance : parseInt(wallDistance)};
+    res.json(responseData);
+})
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Algorithm outline: 
