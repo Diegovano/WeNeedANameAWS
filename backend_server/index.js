@@ -102,8 +102,8 @@ app.get("/api/flag", (req, res) => {
 
 app.get("/LDR", (req, res) => {
     const wallDistance = req.query.distance;
-    console.log("Distance from wall received. Current distance: "+wallDistance);
-    const responseData = {distance : parseInt(wallDistance)};
+    console.log("Distance from wall received. Current distance: "+wallDistance.distance);
+    const responseData = {distance : parseInt(wallDistance.distance)};
     res.json(responseData);
 })
 
