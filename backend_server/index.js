@@ -119,9 +119,9 @@ app.get("/api/flag", (req, res) => {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Initialize variables
-let coordB = { x: 1, y: 1 }
-let coordR = { x: 1, y: 88 }
-let coordY = { x: 88, y: 112 }
+let coordB = { x: 0, y: 0 }
+let coordR = { x: 0, y: 150 }
+let coordY = { x: 70, y: 150 }
 
 // Route to handle beacon distance readings
 app.get('/beacon', (req, res) => {
