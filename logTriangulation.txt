@@ -1,0 +1,149 @@
+> backend_server@1.0.0 start
+> node index.js
+
+Server listening on 3001
+Successfully connected to the database...
+
+GET request received for beacon
+{
+  distance1: '86',
+  distance2: '252',
+  distance3: '343',
+  rotation1: '-135',
+  rotation2: '45',
+  rotation3: '-45'
+}
+list of angles: -152.55,39.9,-43.275
+thetaAB: 192.45000000000002
+thetaBC: -83.175
+thetaAC: 250.72499999999997
+AC: 141.0319112825179
+hAB: -18.7218057941695
+hBC: -48.750463920163476
+hAC: -226.98880171727936
+coordArcAB X: -17.7218057941695
+coordArcAB Y: 44.5
+coordArcBC X: 46.12482686947397
+coordArcBC Y: 136.75046392016347
+coordArcAC X: 223.15287906469175
+coordArcAC Y: -83.52522953719082
+[
+  { x: 91.60440964727265, y: 78.32868551532856 },
+  { x: 1, y: 87.99999999999999 }
+]
+[
+  { x: 17.333044433848606, y: 55.298192289789 },
+  { x: 87.99999999999997, y: 112.00000000000003 }
+]
+Intersection #1: [object Object]
+X #1: 91.60440964727265
+Y #1: 78.32868551532856
+
+
+GET request received for beacon
+{
+  distance1: '104',
+  distance2: '251',
+  distance3: '362',
+  rotation1: '-135',
+  rotation2: '45',
+  rotation3: '-45'
+}
+list of angles: -151.2,39.825,-41.85
+thetaAB: 191.02499999999998
+thetaBC: -81.67500000000001
+thetaAC: 250.65000000000003
+AC: 141.0319112825179
+hAB: 13.746269786053489
+hBC: 14081.672441881812
+hAC: -200.16917785240665
+coordArcAB X: 14.746269786053489
+coordArcAB Y: 44.5
+coordArcBC X: 46.12482686947397
+coordArcBC Y: -13993.672441881812
+coordArcAC X: 202.04433545971054
+coordArcAC Y: -66.98069536031367
+[
+  { x: -136.58922514063605, y: 47.66760099709387 },
+  { x: 1.0000000000001705, y: 87.99999999999974 }
+]
+[
+  { x: 87.99999999983439, y: 111.99999999995497 },
+  { x: 80.41496883578483, y: 109.95350743543123 }
+]
+Intersection #1: [object Object]
+X #1: -136.58922514063605
+Y #1: 47.66760099709387
+
+
+GET request received for beacon
+{
+  distance1: '101',
+  distance2: '247',
+  distance3: '348',
+  rotation1: '-135',
+  rotation2: '45',
+  rotation3: '-45'
+}
+list of angles: -151.425,39.525,-42.9
+thetaAB: 190.95000000000002
+thetaBC: -82.425
+thetaAC: 251.47499999999997
+AC: 141.0319112825179
+hAB: 15.562794091143141
+hBC: -115.7253907112261
+hAC: 953.8451245317942
+coordArcAB X: 16.56279409114314
+coordArcAB Y: 44.5
+coordArcBC X: 46.12482686947397
+coordArcBC Y: 203.7253907112261
+coordArcAC X: -706.2294474009832
+coordArcAC Y: 644.9095668818517
+[
+  { x: 0.9999999999999858, y: 87.99999999999999 },
+  { x: -16.38671231849979, y: 103.09507741023971 }
+]
+[
+  { x: 87.99999999999878, y: 111.99999999999781 },
+  { x: 86.8770034848753, y: 110.03657568814944 }
+]
+Intersection #1: [object Object]
+X #1: 0.9999999999999858
+Y #1: 87.99999999999999
+
+
+
+GET request received for beacon
+{
+  distance1: '97',
+  distance2: '242',
+  distance3: '347',
+  rotation1: '-135',
+  rotation2: '45',
+  rotation3: '-45'
+}
+list of angles: -151.725,39.15,-42.975
+thetaAB: 190.875
+thetaBC: -82.125
+thetaAC: 251.25
+AC: 141.0319112825179
+hAB: 17.428746417411592
+hBC: -200.10524347816917
+hAC: -1820.9186120031777
+coordArcAB X: 18.428746417411592
+coordArcAB Y: 44.5
+coordArcBC X: 46.12482686947397
+coordArcBC Y: 288.1052434781692
+coordArcAC X: 1477.6647645862079
+coordArcAC Y: -1066.7913019729738
+[
+  { x: 0.9999999999999787, y: 88.00000000000001 },
+  { x: -42.52937248145617, y: 107.46660054207346 }
+]
+[
+  { x: 88.00000000000077, y: 112.00000000000071 },
+  { x: 101.12456239701399, y: 126.01179321798463 }
+]
+Intersection #1: [object Object]
+X #1: 0.9999999999999787
+Y #1: 88.00000000000001

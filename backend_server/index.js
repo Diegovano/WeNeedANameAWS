@@ -98,9 +98,6 @@ app.post("/api/reset", (req, res) => {
 // Endpoint to get the current flag value
 app.get("/api/flag", (req, res) => {
     res.json({ flag });
-    // if (flag == 1){
-    //     flag = 0;
-    // }
 });
 
 
@@ -122,169 +119,90 @@ app.get("/api/flag", (req, res) => {
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 // Initialize variables
-let thetaAB, thetaBC, thetaAC;
-let hAB, hBC, hAC;
-let coordA = { x: 1, y: 1 }
-let coordB = { x: 1, y: 88 }
-let coordC = { x: 88, y: 112 }
+let coordB = { x: 1, y: 1 }
+let coordR = { x: 1, y: 88 }
+let coordY = { x: 88, y: 112 }
 
 // Route to handle beacon distance readings
 app.get('/beacon', (req, res) => {
+
+    // Getting input data and processing: 
     console.log("GET request received for beacon");
     console.log(req.query)
     beaconsAngles = []
-    const D1 = Number(req.query.distance1);
-    const D2 = Number(req.query.distance2);
-    const D3 = Number(req.query.distance3);
+    const DB = Number(req.query.distanceB);
+    const DR = Number(req.query.distanceR);
+    const DY = Number(req.query.distanceY);
 
-    const rotationNumber1 = Number(req.query.rotation1);
-    const rotationNumber2 = Number(req.query.rotation2);
-    const rotationNumber3 = Number(req.query.rotation3);
+    const rotationNumberB = Number(req.query.rotationB);
+    const rotationNumberR = Number(req.query.rotationR);
+    const rotationNumberY = Number(req.query.rotationY);
 
-    function alpha(D, rotation) {
+    function getAngle(D, rotation) {
         D -= 320;
         const angle = (D / 320) * 24;
-        return beaconsAngles.push((rotation) + angle);
+        return beaconsAngles.push((angle + (rotation)));
     }
 
-    alpha(D1, rotationNumber1);
-    alpha(D2, rotationNumber2);
-    alpha(D3, rotationNumber3);
-
+    getAngle(DY, rotationNumberY);
+    getAngle(DR, rotationNumberR);
+    getAngle(DB, rotationNumberB);
+    // [Y, R, B]
     console.log("list of angles: " + beaconsAngles)
 
-    // 5)
-    thetaAB = beaconsAngles[1] - beaconsAngles[0];
-    console.log("thetaAB: " + thetaAB)
-    thetaBC = beaconsAngles[2] - beaconsAngles[1];
-    console.log("thetaBC: " + thetaBC)
-    thetaAC = 360 - thetaAB - thetaBC
-    console.log("thetaAC: " + thetaAC)
+    //thetaRY
+    let alpha = beaconsAngles[1] - beaconsAngles[0];
+    console.log("alpha: " + alpha)
+    // thetaBR
+    let gamma = beaconsAngles[2] - beaconsAngles[1];
+    console.log("gamma: " + gamma)
     beaconsAngles = []
-
-    // 6)
-    let AB = Math.sqrt((coordB.x - coordA.x) ** 2 + (coordB.y - coordA.y) ** 2);
-    let BC = Math.sqrt((coordC.x - coordB.x) ** 2 + (coordC.y - coordB.y) ** 2);
-    let AC = Math.sqrt((coordC.x - coordA.x) ** 2 + (coordC.y - coordA.y) ** 2);
-    console.log("AC: " + AC);
-    hAB = (AB / 2) * (1 / Math.tan(thetaAB / 2));
-    hBC = (BC / 2) * (1 / Math.tan(thetaBC / 2));
-    hAC = (AC / 2) * (1 / Math.tan(thetaAC / 2));
-    console.log("hAB: " + hAB);
-    console.log("hBC: " + hBC);
-    console.log("hAC: " + hAC);
-
-    // Get point for circle
-    let coordArcAB = { x: coordB.x + hAB, y: coordB.y - AB / 2 };
-    let coordArcBC = { x: coordB.x + BC / 2, y: coordB.y - hBC };
-    console.log("coordArcAB X: " + coordArcAB.x)
-    console.log("coordArcAB Y: " + coordArcAB.y)
-
-    console.log("coordArcBC X: " + coordArcBC.x)
-    console.log("coordArcBC Y: " + coordArcBC.y)
+    // Inputs
+    let EB = coordB.x;
+    let ER = coordR.x;
+    let EY = coordY.x;
+    let NB = coordB.y;
+    let NR = coordR.y;
+    let NY = coordY.y;
+    // Radians 
+    let ang_alpha = alpha * Math.PI / 180;
+    let ang_gamma = gamma * Math.PI / 180;
+    let ang_beta = 2 * Math.PI - ang_alpha - ang_gamma;
 
 
+    // Calculating distances:
+    let BR = Math.sqrt((EB - ER) ** 2 + (NB - NR) ** 2);
+    let BY = Math.sqrt((EB - EY) ** 2 + (NB - NY) ** 2);
+    let RY = Math.sqrt((ER - EY) ** 2 + (NR - NY) ** 2);
 
-    function findPerpendicularPoint(distance) {
-        const vectorAC = { x: coordC.x - coordA.x, y: coordC.y - coordA.y };
+    // Calculating angles: 
+    angB = Math.acos((Math.pow(BR, 2) + Math.pow(BY, 2) - Math.pow(RY, 2)) / (2 * BR * BY));
+    angR = Math.acos((Math.pow(BR, 2) + Math.pow(RY, 2) - Math.pow(BY, 2)) / (2 * BR * RY));
+    angY = Math.acos((Math.pow(BY, 2) + Math.pow(RY, 2) - Math.pow(BR, 2)) / (2 * BY * RY));
 
-        // Calculate the length of vector AC
-        const lengthAC = Math.sqrt(vectorAC.x ** 2 + vectorAC.y ** 2);
+    // Calculating cotangents of angles: 
+    COT_B = 1 / Math.tan(angB);
+    COT_R = 1 / Math.tan(angR);
+    COT_Y = 1 / Math.tan(angY);
+    COT_ALPHA = 1 / Math.tan(ang_alpha);
+    COT_BETA = 1 / Math.tan(ang_beta);
+    COT_GAMMA = 1 / Math.tan(ang_gamma);
 
-        // Normalize the vector AC to get the unit vector
-        const unitVectorAC = { x: vectorAC.x / lengthAC, y: vectorAC.y / lengthAC };
+    // Calculating scalers: 
+    KB = 1 / (COT_B - COT_ALPHA);
+    KR = 1 / (COT_R - COT_BETA);
+    KY = 1 / (COT_Y - COT_GAMMA);
+    K = KA + KB + KC;
 
-        // Calculate the perpendicular vector to AC
-        const perpendicularVector = { x: -unitVectorAC.y, y: unitVectorAC.x };
+    // Calculating final coordinates: 
+    E = (KB * EB + KR * ER + KY * EY);
+    N = (KB * NB + KR * NR + KY * NY);
 
-        // Calculate the midpoint of AC
-        const midpointX = (coordA.x + coordC.x) / 2;
-        const midpointY = (coordA.y + coordC.y) / 2;
-
-        // Calculate the coordinates where the perpendicular line ends
-        const perpendicularX = midpointX + (perpendicularVector.x * distance);
-        const perpendicularY = midpointY + (perpendicularVector.y * distance);
-
-        return { x: perpendicularX, y: perpendicularY };
-    }
-
-    let AC_Coord = findPerpendicularPoint(hAC)
-    let coordArcAC = { x: AC_Coord.x, y: AC_Coord.y };
-    console.log("coordArcAC X: " + coordArcAC.x)
-    console.log("coordArcAC Y: " + coordArcAC.y)
-
-    // 7) 
-    function circleIntersection(p1, p2, p3, q1, q2, q3) {
-        const circle1 = circleFromPoints(p1, p2, p3);
-        const circle2 = circleFromPoints(q1, q2, q3);
-
-        const d = Math.sqrt((circle2.center.x - circle1.center.x) ** 2 + (circle2.center.y - circle1.center.y) ** 2);
-
-        // Check if the circles are separate or identical
-        if (d > circle1.radius + circle2.radius || d < Math.abs(circle1.radius - circle2.radius)) {
-            return []; // No intersection
-        }
-
-        // Find the intersection points
-        const a = (circle1.radius ** 2 - circle2.radius ** 2 + d ** 2) / (2 * d);
-        const h = Math.sqrt(circle1.radius ** 2 - a ** 2);
-
-        const intersectionX1 = circle1.center.x + (a * (circle2.center.x - circle1.center.x)) / d;
-        const intersectionY1 = circle1.center.y + (a * (circle2.center.y - circle1.center.y)) / d;
-
-        const intersectionX2 = intersectionX1 + (h * (circle2.center.y - circle1.center.y)) / d;
-        const intersectionY2 = intersectionY1 - (h * (circle2.center.x - circle1.center.x)) / d;
-
-        const intersectionX3 = intersectionX1 - (h * (circle2.center.y - circle1.center.y)) / d;
-        const intersectionY3 = intersectionY1 + (h * (circle2.center.x - circle1.center.x)) / d;
-
-        return [
-            { x: intersectionX2, y: intersectionY2 },
-            { x: intersectionX3, y: intersectionY3 },
-        ];
-    }
-
-    // Helper function to calculate circle from 3 points
-    function circleFromPoints(p1, p2, p3) {
-        const x1 = p1.x;
-        const y1 = p1.y;
-        const x2 = p2.x;
-        const y2 = p2.y;
-        const x3 = p3.x;
-        const y3 = p3.y;
-
-        const A = x2 - x1;
-        const B = y2 - y1;
-        const C = x3 - x1;
-        const D = y3 - y1;
-
-        const E = A * (x1 + x2) + B * (y1 + y2);
-        const F = C * (x1 + x3) + D * (y1 + y3);
-
-        const G = 2 * (A * (y3 - y2) - B * (x3 - x2));
-
-        const centerX = (D * E - B * F) / G;
-        const centerY = (A * F - C * E) / G;
-
-        const radius = Math.sqrt((x1 - centerX) ** 2 + (y1 - centerY) ** 2);
-
-        return { center: { x: centerX, y: centerY }, radius: radius };
-    }
-
-
-    const intersections = circleIntersection(coordA, coordB, coordArcAB, coordB, coordC, coordArcBC);
-    const confirmation = circleIntersection(coordB, coordC, coordArcBC, coordA, coordC, coordArcAC);
-    console.log(intersections)
-    console.log(confirmation)
-
+    const currentPosition = { x: E, y: N };
     // Testing purposes:
-    const firstIntersection = intersections[0];
-    console.log("Intersection #1: " + firstIntersection)
-    console.log("X #1: " + firstIntersection.x)
-    console.log("Y #1: " + firstIntersection.y)
     let NID = 1;
-    let X_Coord = parseInt(firstIntersection.x);
-    let Y_Coord = parseInt(firstIntersection.y);
+    let X_Coord = parseInt(currentPosition.x);
+    let Y_Coord = parseInt(currentPosition.y);
 
     con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
         [NID, X_Coord, Y_Coord], (err, _result) => {
@@ -294,7 +212,6 @@ app.get('/beacon', (req, res) => {
 
         });
 
-    //res.send('Beacon reading received');
     const responseData = {
         NID: parseInt(NID),
         X: X_Coord,
