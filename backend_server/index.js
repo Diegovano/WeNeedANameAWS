@@ -225,7 +225,7 @@ app.get('/beacon', (req, res) => {
     console.log("BP: "+BP)
     console.log("RP: "+RP)
     console.log("YP: "+YP)
-    conole.log("RBY: "+RBY)
+    console.log("RBY: "+RBY)
     console.log("BRY: "+BRY)
     console.log("BYR: "+BYR)
     console.log("Position found: x: "+currentPosition.x+", y: "+currentPosition.y);
