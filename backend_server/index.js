@@ -141,7 +141,7 @@ app.get('/beacon', (req, res) => {
     function getAngle(D, rotation) {
         D -= 320;
         const angle = (D / 320) * 24;
-        return beaconsAngles.push((angle + (rotation)));
+        return beaconsAngles.push(-(angle - (rotation)));
     }
 
     getAngle(DY, rotationNumberY);
