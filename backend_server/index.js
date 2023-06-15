@@ -108,7 +108,7 @@ app.get("/LDR", (req, res) => {
     console.log("Distance from wall received. Current distance: "+wallDistance);
     const responseData = {distance: parseFloat(wallDistance)};
     res.json(responseData);
-})
+})``
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
