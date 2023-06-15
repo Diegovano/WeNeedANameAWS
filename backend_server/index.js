@@ -1,3 +1,6 @@
+
+
+
 const express = require("express");
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -102,8 +105,8 @@ app.get("/api/flag", (req, res) => {
 
 app.get("/LDR", (req, res) => {
     const wallDistance = req.query.distance;
-    console.log("Distance from wall received. Current distance: "+wallDistance.distance);
-    const responseData = {distance : parseInt(wallDistance.distance)};
+    console.log("Distance from wall received. Current distance: "+wallDistance);
+    const responseData = {distance: parseFloat(wallDistance)};
     res.json(responseData);
 })
 
@@ -127,8 +130,8 @@ app.get("/LDR", (req, res) => {
 
 // Initialize variables
 let coordB = { x: 0, y: 0 }
-let coordR = { x: 0, y: 70 }
-let coordY = { x: 150, y: 70 }
+let coordR = { x: 0, y: 180 }
+let coordY = { x: 120, y: 180 }
 
 // Route to handle beacon distance readings
 app.get('/beacon', (req, res) => {
@@ -148,7 +151,7 @@ app.get('/beacon', (req, res) => {
     function getAngle(D, rotation) {
         D -= 320;
         const angle = (D / 320) * 24;
-        return beaconsAngles.push(-(angle - (rotation)));
+        return beaconsAngles.push((angle + (rotation)));
     }
 
     getAngle(DY, rotationNumberY);
@@ -158,10 +161,10 @@ app.get('/beacon', (req, res) => {
     console.log("list of angles: " + beaconsAngles)
 
     //thetaYR
-    let alpha = beaconsAngles[1] - beaconsAngles[0];
+    let alpha = Math.abs(beaconsAngles[1] - beaconsAngles[0]);
     console.log("alpha: " + alpha)
     // thetaBR
-    let gamma = beaconsAngles[2] - beaconsAngles[1];
+    let gamma = Math.abs(beaconsAngles[2] - beaconsAngles[1]);
     console.log("gamma: " + gamma)
     beaconsAngles = []
     // Inputs
