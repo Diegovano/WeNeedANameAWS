@@ -1,6 +1,3 @@
-
-
-
 const express = require("express");
 const cors = require('cors');
 const bodyParser = require('body-parser');
@@ -105,8 +102,8 @@ app.get("/api/flag", (req, res) => {
 
 app.get("/LDR", (req, res) => {
     const wallDistance = req.query.distance;
-    console.log("Distance from wall received. Current distance: "+wallDistance);
-    const responseData = {distance: parseFloat(wallDistance)};
+    console.log("Distance from wall received. Current distance: " + wallDistance);
+    const responseData = { distance: parseFloat(wallDistance) };
     res.json(responseData);
 })``
 
@@ -184,17 +181,17 @@ app.get('/beacon', (req, res) => {
     let BR = Math.sqrt((EB - ER) ** 2 + (NB - NR) ** 2);
     let BY = Math.sqrt((EB - EY) ** 2 + (NB - NY) ** 2);
     let RY = Math.sqrt((ER - EY) ** 2 + (NR - NY) ** 2);
-    console.log("BR: "+BR)
-    console.log("BY: "+BY)
-    console.log("RY: "+RY)
+    console.log("BR: " + BR)
+    console.log("BY: " + BY)
+    console.log("RY: " + RY)
 
     // Calculating angles: 
     angB = Math.acos((Math.pow(BR, 2) + Math.pow(BY, 2) - Math.pow(RY, 2)) / (2 * BR * BY));
     angR = Math.acos((Math.pow(BR, 2) + Math.pow(RY, 2) - Math.pow(BY, 2)) / (2 * BR * RY));
     angY = Math.acos((Math.pow(BY, 2) + Math.pow(RY, 2) - Math.pow(BR, 2)) / (2 * BY * RY));
-    console.log("angB: "+angB)
-    console.log("angR: "+angR)
-    console.log("angY: "+angY)
+    console.log("angB: " + angB)
+    console.log("angR: " + angR)
+    console.log("angY: " + angY)
 
     // Calculating cotangents of angles: 
     COT_B = 1 / Math.tan(angB);
@@ -211,34 +208,34 @@ app.get('/beacon', (req, res) => {
     K = KB + KR + KY;
 
     // Calculating final coordinates: 
-    E = (KB * EB + KR * ER + KY * EY)/K;
-    N = (KB * NB + KR * NR + KY * NY)/K;
+    E = (KB * EB + KR * ER + KY * EY) / K;
+    N = (KB * NB + KR * NR + KY * NY) / K;
 
-     // calculate distances from point P
-     BP=Math.sqrt( Math.pow((EB-E),2) + Math.pow((NB-N),2) );
-     RP=Math.sqrt( Math.pow((ER-E),2) + Math.pow((NR-N),2) );
-     YP=Math.sqrt( Math.pow((EY-E),2) + Math.pow((NY-N),2) );
+    // calculate distances from point P
+    BP = Math.sqrt(Math.pow((EB - E), 2) + Math.pow((NB - N), 2));
+    RP = Math.sqrt(Math.pow((ER - E), 2) + Math.pow((NR - N), 2));
+    YP = Math.sqrt(Math.pow((EY - E), 2) + Math.pow((NY - N), 2));
 
-  
-     // calculate angles in degrees
-     RBY = angB * 180 / Math.PI
-     BRY = angR * 180 / Math.PI
-     BYR = angY * 180 / Math.PI
+
+    // calculate angles in degrees
+    RBY = angB * 180 / Math.PI
+    BRY = angR * 180 / Math.PI
+    BYR = angY * 180 / Math.PI
 
     const currentPosition = { x: E, y: N };
 
 
     // DEBUG
-    console.log("BR: "+BR)
-    console.log("BY: "+BY)
-    console.log("RY: "+RY)
-    console.log("BP: "+BP)
-    console.log("RP: "+RP)
-    console.log("YP: "+YP)
-    console.log("RBY: "+RBY)
-    console.log("BRY: "+BRY)
-    console.log("BYR: "+BYR)
-    console.log("Position found: x: "+currentPosition.x+", y: "+currentPosition.y);
+    console.log("BR: " + BR)
+    console.log("BY: " + BY)
+    console.log("RY: " + RY)
+    console.log("BP: " + BP)
+    console.log("RP: " + RP)
+    console.log("YP: " + YP)
+    console.log("RBY: " + RBY)
+    console.log("BRY: " + BRY)
+    console.log("BYR: " + BYR)
+    console.log("Position found: x: " + currentPosition.x + ", y: " + currentPosition.y);
 
 
 
