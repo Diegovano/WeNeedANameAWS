@@ -190,9 +190,11 @@ app.get('/beacon', (req, res) => {
 
     //thetaYR
     let alpha = Math.abs(beaconsAngles[1] - beaconsAngles[0]);
+    if (alpha > 180){alpha = 360-alpha;}
     console.log("alpha: " + alpha)
     // thetaBR
     let gamma = Math.abs(beaconsAngles[2] - beaconsAngles[1]);
+    if (gamma > 180){gamma = 360-gamma;}
     console.log("gamma: " + gamma)
     beaconsAngles = []
     // Inputs
