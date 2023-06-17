@@ -175,7 +175,11 @@ app.get('/beacon', (req, res) => {
     function getAngle(D, rotation) {
         D -= 320;
         const angle = (D / 320) * 24;
-        return beaconsAngles.push((angle + (rotation)));
+        let computedAngle = angle + rotation
+        if (computedAngle < 0){
+            computedAngle += 360
+        }
+        return beaconsAngles.push(computedAngle);
     }
 
     getAngle(DY, rotationNumberY);
@@ -289,7 +293,7 @@ app.get('/beacon', (req, res) => {
         _distanceBY: BY, 
         _distanceRY: RY,
     };
-    
+
     fs.writeFile('../log.txt', JSON.stringify(content) + ',', { flag: 'a+' }, err => {
         if (err) {
             console.error(err);
