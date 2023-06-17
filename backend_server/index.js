@@ -295,7 +295,7 @@ app.get('/beacon', (req, res) => {
         _distanceRY: RY,
     };
 
-    fs.writeFile('/WeNeedANameAWS/log.txt', content, { flag: 'a+' }, err => {
+    fs.writeFile('../log.txt', content, { flag: 'a+' }, err => {
         counter(index);
         if (err) {
             console.error(err);
@@ -317,7 +317,6 @@ app.get('/beacon', (req, res) => {
         });
 
     const responseData = {
-        NID: parseInt(NID),
         X: X_Coord,
         Y: Y_Coord
     };
