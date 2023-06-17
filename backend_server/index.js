@@ -160,8 +160,6 @@ let coordY = { x: 240, y: 360 }
 
 // Route to handle beacon distance readings
 app.get('/beacon', (req, res) => {
-    let index = 0; 
-
     // Getting input data and processing: 
     console.log("GET request received for beacon");
     console.log(req.query)
@@ -266,13 +264,8 @@ app.get('/beacon', (req, res) => {
     console.log("BYR: " + BYR)
     console.log("Position found: x: " + currentPosition.x + ", y: " + currentPosition.y);
 
-    // Logging data for heatmap: 
-    function counter(index){
-        return index + 1;
-    }
-    
+    // Logging data for heatmap:   
     const content = {
-        index: index,
         distanceB: DB,
         headingB: rotationNumberB,
         distanceR: DR,
@@ -296,9 +289,8 @@ app.get('/beacon', (req, res) => {
         _distanceBY: BY, 
         _distanceRY: RY,
     };
-
-    fs.writeFile('../log.txt', JSON.stringify(content), { flag: 'a+' }, err => {
-        counter(index);
+    
+    fs.writeFile('../log.txt', JSON.stringify(content) + ',', { flag: 'a+' }, err => {
         if (err) {
             console.error(err);
         }

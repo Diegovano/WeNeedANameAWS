@@ -91,6 +91,13 @@ function MazeComponent() {
           <button onClick={handleClick}>Triangulate</button>
         </center>
       </div>
+      <div>
+        {coordData.map((coordinate, index) => (
+          <div className="coordDiv" key={index}>
+            x: {coordinate.x}, y: {coordinate.y}
+          </div>
+        ))}
+      </div>
       <center>
         <canvas
           className="App-canvas"
