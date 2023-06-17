@@ -76,8 +76,8 @@ function handleClick() {
 
 function MazeComponent() {
 
-  const canvasWidth = 360;
-  const canvasHeight = 240;
+  const canvasWidth = 450;
+  const canvasHeight = 300;
 
   const [coordData] = useData();
   // console.log(coordData)

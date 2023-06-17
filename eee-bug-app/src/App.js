@@ -32,8 +32,8 @@ function deleteData() {
 
 function MazeComponent() {
 
-  const canvasWidth = window.innerWidth * 0.85;
-  const canvasHeight = window.innerHeight * 0.85;
+  const canvasWidth = 450;
+  const canvasHeight = 300;
   
   const [coordData] = useData();
   // console.log(coordData)
