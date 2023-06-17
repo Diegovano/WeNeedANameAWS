@@ -281,7 +281,9 @@ app.get('/beacon', (req, res) => {
         headingY: rotationNumberY,
         PositionFoundX: currentPosition.x,
         PositionFoundY: currentPosition.y,
-        startAngles: beaconsAngles,
+        startAngleY: beaconsAngles[0],
+        startAngleR: beaconsAngles[1],
+        startAngleB: beaconsAngles[2],
         thetaYR: alpha,
         thetaBR: gamma, 
         distanceBP: BP,
@@ -295,7 +297,7 @@ app.get('/beacon', (req, res) => {
         _distanceRY: RY,
     };
 
-    fs.writeFile('../log.txt', content, { flag: 'a+' }, err => {
+    fs.writeFile('../log.txt', JSON.stringify(content), { flag: 'a+' }, err => {
         counter(index);
         if (err) {
             console.error(err);

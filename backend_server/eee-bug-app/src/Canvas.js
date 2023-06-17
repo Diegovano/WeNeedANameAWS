@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 
 
 export function draw(ctx, coordinates) {
-    console.log("attempting to draw")
+    console.log("attempting to draw");
     ctx.fillStyle = 'green';
     coordinates.forEach((coordinate) => {
         ctx.beginPath();
@@ -10,22 +10,23 @@ export function draw(ctx, coordinates) {
         ctx.fill();
     });
     // Add blue dot at (0, 0)
-  ctx.fillStyle = 'blue';
-  ctx.beginPath();
-  ctx.arc(0, 0, 8, 0, 2 * Math.PI);
-  ctx.fill();
+    ctx.fillStyle = 'blue';
+    ctx.beginPath();
+    ctx.arc(0, 0, 8, 0, 2 * Math.PI);
+    ctx.fill();
 
-  // Add red dot at (0, 360)
-  ctx.fillStyle = 'red';
-  ctx.beginPath();
-  ctx.arc(0, 360, 8, 0, 2 * Math.PI);
-  ctx.fill();
+    // Add red dot at (0, 360)
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(0, 360, 8, 0, 2 * Math.PI);
+    ctx.fill();
 
-  // Add yellow dot at (240, 360)
-  ctx.fillStyle = 'yellow';
-  ctx.beginPath();
-  ctx.arc(240, 360, 8, 0, 2 * Math.PI);
-  ctx.fill();
+    // Add yellow dot at (240, 360)
+    ctx.fillStyle = 'yellow';
+    ctx.beginPath();
+    ctx.arc(240, 360, 8, 0, 2 * Math.PI);
+    ctx.fill();
+
 };
 
 
@@ -51,13 +52,13 @@ export function useCanvas(coordData, canvasWidth, canvasHeight) {
                     ctx.lineTo(endPoint.x, endPoint.y);
                 }
                 ctx.stroke();
-                } else {
-                    console.log("getContext() returned null");
-                }
             } else {
-                console.log("canvasRef.current is null");
+                console.log("getContext() returned null");
             }
-        }, [coordData, canvasWidth, canvasHeight]);
+        } else {
+            console.log("canvasRef.current is null");
+        }
+    }, [coordData, canvasWidth, canvasHeight]);
 
     return canvasRef;
 }
