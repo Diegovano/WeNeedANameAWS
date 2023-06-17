@@ -272,6 +272,7 @@ app.get('/beacon', (req, res) => {
 
     // Logging data for heatmap:   
     const content = {
+        timestamp: Date.now(),
         distanceB: DB,
         headingB: rotationNumberB,
         distanceR: DR,
