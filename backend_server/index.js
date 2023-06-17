@@ -1,5 +1,6 @@
 const express = require("express");
 const cors = require('cors');
+const fs = require('fs')
 const bodyParser = require('body-parser');
 const PORT = process.env.NODE_PORT || 3001;
 const path = require('path')
@@ -107,9 +108,36 @@ app.get("/LDR", (req, res) => {
     res.json(responseData);
 })
 
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+// Driving Algorithm Outline: 
+// RSLB
+// TODO: Keep track of visited nodes in DB, when all nodes are visited at least twice (Tremaux) the maze is mapped 
+//     : OR keep count of unvisited edges at each node and maze is mapped when counter is 0 for each node 
+
+// def mapMaze():
+//    steps = x
+//    turnAngle = y
+//    rightWall = IR.readingR
+//    frontWall = IR.readingF
+//    while (!complete):
+//      if (rightWall)
+//          if(frontWall):
+//              turnLeft(45)
+//          elif(leftWall in IR range):
+//              turnRight(turnAngle)
+//              moveForward(steps)
+//          else:
+//              moveForward(steps)
+//      else: 
+//          moveForward(steps) 
+//          triangulate() & createNode()
+//          moveBack(steps)
+//          turnRight(turnAngle) & moveForward(steps)   
+// ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-// Algorithm outline: 
+// Triangulation Algorithm Outline: 
 
 // 1) Get distance to beacon in pixel from camera (D)
 // 2) Keep count of the quadrant in which the reading is made (variable angle offset )
@@ -127,11 +155,12 @@ app.get("/LDR", (req, res) => {
 
 // Initialize variables
 let coordB = { x: 0, y: 0 }
-let coordR = { x: 0, y: 180 }
-let coordY = { x: 120, y: 180 }
+let coordR = { x: 0, y: 360 }
+let coordY = { x: 240, y: 360 }
 
 // Route to handle beacon distance readings
 app.get('/beacon', (req, res) => {
+    let index = 0; 
 
     // Getting input data and processing: 
     console.log("GET request received for beacon");
@@ -237,7 +266,43 @@ app.get('/beacon', (req, res) => {
     console.log("BYR: " + BYR)
     console.log("Position found: x: " + currentPosition.x + ", y: " + currentPosition.y);
 
+    // Logging data for heatmap: 
+    function counter(index){
+        return index + 1;
+    }
+    
+    const content = {
+        index: index,
+        distanceB: DB,
+        headingB: rotationNumberB,
+        distanceR: DR,
+        headingR: rotationNumberR,
+        distanceY: DY,
+        headingY: rotationNumberY,
+        PositionFoundX: currentPosition.x,
+        PositionFoundY: currentPosition.y,
+        startAngles: beaconsAngles,
+        thetaYR: alpha,
+        thetaBR: gamma, 
+        distanceBP: BP,
+        distanceRP: RP,
+        distanceYP: YP, 
+        _thetaRBY: RBY,
+        _thetaBRY: BRY,
+        _thetaBYR: BYR,
+        _distanceBR: BR,
+        _distanceBY: BY, 
+        _distanceRY: RY,
+    };
 
+    fs.writeFile('/WeNeedANameAWS/log.txt', content, { flag: 'a+' }, err => {
+        counter(index);
+        if (err) {
+            console.error(err);
+        }
+
+
+    });
 
     // Testing purposes:
     let NID = 1;
