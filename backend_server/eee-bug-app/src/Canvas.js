@@ -3,13 +3,32 @@ import React, { useEffect, useRef } from 'react';
 
 export function draw(ctx, coordinates) {
     console.log("attempting to draw")
-    ctx.fillStyle = 'red';
+    ctx.fillStyle = 'green';
     coordinates.forEach((coordinate) => {
         ctx.beginPath();
-        ctx.arc(coordinate.x, coordinate.y, 5, 0, 2 * Math.PI);
+        ctx.arc(coordinate.x, coordinate.y, 2, 0, 2 * Math.PI);
         ctx.fill();
     });
+    // Add blue dot at (0, 0)
+  ctx.fillStyle = 'blue';
+  ctx.beginPath();
+  ctx.arc(0, 0, 8, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Add red dot at (0, 360)
+  ctx.fillStyle = 'red';
+  ctx.beginPath();
+  ctx.arc(0, 360, 8, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Add yellow dot at (240, 360)
+  ctx.fillStyle = 'yellow';
+  ctx.beginPath();
+  ctx.arc(240, 360, 8, 0, 2 * Math.PI);
+  ctx.fill();
 };
+
+
 
 
 export function useCanvas(coordData, canvasWidth, canvasHeight) {
@@ -23,7 +42,7 @@ export function useCanvas(coordData, canvasWidth, canvasHeight) {
                 draw(ctx, coordData);
                 // Draw lines between consecutive points
                 ctx.beginPath();
-                ctx.strokeStyle = "blue";
+                ctx.strokeStyle = "purple";
                 ctx.lineWidth = 2;
                 for (let i = 0; i < coordData.length - 1; i++) {
                     const startPoint = coordData[i];

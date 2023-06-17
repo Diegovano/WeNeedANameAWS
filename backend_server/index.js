@@ -305,12 +305,11 @@ app.get('/beacon', (req, res) => {
     });
 
     // Testing purposes:
-    let NID = 1;
-    let X_Coord = parseInt((currentPosition.x) * 1.25);
-    let Y_Coord = parseInt((currentPosition.y) * 1.25);
+    let X_Coord = parseInt((currentPosition.x));
+    let Y_Coord = parseInt((currentPosition.y));
 
-    con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
-        [NID, X_Coord, Y_Coord], (err, _result) => {
+    con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
+        [X_Coord, Y_Coord], (err, _result) => {
             if (err) {
                 console.log(err)
             }

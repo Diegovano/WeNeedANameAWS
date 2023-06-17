@@ -76,8 +76,8 @@ function handleClick() {
 
 function MazeComponent() {
 
-  const canvasWidth = 450;
-  const canvasHeight = 300;
+  const canvasWidth = 240;
+  const canvasHeight = 360;
 
   const [coordData] = useData();
   // console.log(coordData)
@@ -85,14 +85,20 @@ function MazeComponent() {
 
   return (
     <main className="App-main" >
-      <button onClick={deleteData}>Delete Data</button>
-      <button onClick={handleClick}>Triangulate</button>
-      <canvas
-        className="App-canvas"
-        ref={canvasRef}
-        width={canvasWidth}
-        height={canvasHeight}
-      />
+      <div>
+        <center>
+          <button onClick={deleteData}>Delete Data</button>
+          <button onClick={handleClick}>Triangulate</button>
+        </center>
+      </div>
+      <center>
+        <canvas
+          className="App-canvas"
+          ref={canvasRef}
+          width={canvasWidth}
+          height={canvasHeight}
+        />
+      </center>
     </main>
   );
 }
