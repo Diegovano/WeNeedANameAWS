@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 
-export function draw(ctx, data) {
+export function drawEstimate(ctx, data) {
   console.log("attempting to draw");
-  ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
   ctx.setLineDash([2, 4]);
   ctx.strokeStyle = 'purple';
 
@@ -35,8 +34,8 @@ export function draw(ctx, data) {
       ctx.fill();
     }
 
-    const deltaY = Math.sin((currentHeading + heading) * (Math.PI / 180)) * steps;
-    const deltaX = Math.cos((currentHeading + heading) * (Math.PI / 180)) * steps;
+    const deltaY = Math.sin((currentHeading + heading)) * steps;
+    const deltaX = Math.cos((currentHeading + heading)) * steps;
 
     const newX = currentX + deltaX;
     const newY = currentY + deltaY;
@@ -61,12 +60,12 @@ export function useEstimateCanvas(data, canvasWidth, canvasHeight) {
       const ctx = canvasObj.getContext('2d');
       if (ctx) {
         ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        draw(ctx, data);
+        drawEstimate(ctx, data);
       } else {
         console.log('getContext() returned null');
       }
     } else {
-      console.log('canvasRef.current is null');
+      console.log('canvasRefEstimate.current is null');
     }
   }, [data, canvasWidth, canvasHeight]);
 
