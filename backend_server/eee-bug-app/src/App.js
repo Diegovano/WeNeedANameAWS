@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./styles.css";
-import { useCanvas } from "./Canvas";
+import { useCanvas } from "./BeaconCanvas";
+import { DebugTerminal } from "./DebugTerminal"
 
 function useData() {
   const [coordinates, setCoordinates] = useState([]);
@@ -84,29 +85,29 @@ function MazeComponent() {
   const canvasRef = useCanvas(coordData, canvasWidth, canvasHeight);
 
   return (
-    <main className="App-main" >
-      <div>
-        <center>
-          <button onClick={deleteData}>Delete Data</button>
-          <button onClick={handleClick}>Triangulate</button>
-        </center>
-      </div>
-      <div>
-        {coordData.map((coordinate, index) => (
-          <div className="coordDiv" key={index}>
-            x: {coordinate.x}, y: {coordinate.y}
-          </div>
-        ))}
-      </div>
+    <main className="App-main">
+    <div id="header">
       <center>
+        <button onClick={deleteData}>Delete Data</button>
+        <button onClick={handleClick}>Triangulate</button>
+      </center>
+    </div>
+    <div id="container">
+      <div id="debugTerminal">
+        <DebugTerminal />
+      </div>
+      <div id="canvas">
         <canvas
           className="App-canvas"
           ref={canvasRef}
           width={canvasWidth}
           height={canvasHeight}
         />
-      </center>
-    </main>
+      </div>
+      <div id="clear"></div>
+    </div>
+  </main>
+  
   );
 }
 

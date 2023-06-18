@@ -22,15 +22,12 @@ export function draw(ctx, coordinates) {
     ctx.fill();
 
     // Add yellow dot at (240, 360)
-    ctx.fillStyle = 'yellow';
+    ctx.fillStyle = 'orange';
     ctx.beginPath();
     ctx.arc(240, 360, 8, 0, 2 * Math.PI);
     ctx.fill();
 
 };
-
-
-
 
 export function useCanvas(coordData, canvasWidth, canvasHeight) {
     const canvasRef = useRef(null);

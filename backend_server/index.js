@@ -41,33 +41,19 @@ app.get("/mazeQuery", (_req, res) => {
 // Test endpoint 
 app.get("/testQuery", (req, res) => {
     console.log("GET request received");
-    console.log(req.query)
-    const NID = req.query.NID;
     const X_Coord = req.query.X_Coord;
     const Y_Coord = req.query.Y_Coord;
-
-    if (!NID || !X_Coord || !Y_Coord) {
-        console.log(NID);
-        console.log(X_Coord);
-        console.log(Y_Coord);
-        res.status(400).json({ error: 'Missing or invalid query parameters' });
-        return;
-    }
-
-    con.query("INSERT INTO Nodes (NID, X_Coord, Y_Coord) VALUES (?,?,?)",
-        [NID, X_Coord, Y_Coord], (err, _result) => {
+    con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
+        [X_Coord, Y_Coord], (err, _result) => {
             if (err) {
                 console.log(err)
             }
 
         });
-
     const responseData = {
-        NID: parseInt(NID),
         X_Coord: parseInt(X_Coord),
         Y_Coord: parseInt(Y_Coord)
     };
-
     res.json(responseData);
 });
 
@@ -102,10 +88,12 @@ app.get("/api/flag", (req, res) => {
 });
 
 app.get("/LDR", (req, res) => {
-    const wallDistance = req.query.distance;
-    console.log("Distance from wall received. Current distance: " + wallDistance);
-    const responseData = { distance: parseFloat(wallDistance) };
-    res.json(responseData);
+    const L = req.query.L;
+    const R = req.query.R;
+    const F = req.query.F;
+    const FR= req.query.FR;
+    const FL = req.query.FL;
+    
 })
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
