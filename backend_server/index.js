@@ -19,6 +19,7 @@ app.use(cors({
 
 
 var mysql = require('mysql');
+const { time } = require("console");
 var con = mysql.createConnection(
     {
         host: "54.82.44.87",
@@ -89,14 +90,15 @@ app.get("/api/flag", (req, res) => {
 
 app.get("/heading", (req, res) => {
     // Get heading from query string and convert it into an integer
-    let heading = Number(req.query.heading);
-    con.query("INSERT INTO Heading (timestamp, heading) VALUES (?, ?)",
-        [Date.now(), heading], (err, _result) => {
+    let heading = parseInt(req.query['heading']);
+    let timestamp = Date.now()
+    con.query("INSERT INTO Headings (HID, heading) VALUES (?, ?)",
+        [timestamp, heading], (err, _result) => {
             if (err) {
                 console.log(err)
             }
         });
-    con.query("SELECT * FROM Heading", function (err, result, _fields) {
+    con.query("SELECT * FROM Headings", function (err, result, _fields) {
         if (err) throw err;
         res.json(result)
     });
@@ -106,9 +108,10 @@ app.get("/heading", (req, res) => {
 
 app.get("/steps", (req, res) => {
     // Get heading from query string and convert it into an integer
-    let steps = Number(req.query.steps);
-    con.query("INSERT INTO Steps (timestamp, steps) VALUES (?, ?)",
-        [Date.now(), steps], (err, _result) => {
+    let steps = parseInt(req.query['steps']);
+    let timestamp = Date.now()
+    con.query("INSERT INTO Steps (SID, steps) VALUES (?, ?)",
+        [timestamp, steps], (err, _result) => {
             if (err) {
                 console.log(err)
             }
