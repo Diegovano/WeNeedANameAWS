@@ -6,6 +6,24 @@ export function draw(ctx, data) {
   ctx.setLineDash([2, 4]);
   ctx.strokeStyle = 'purple';
 
+  // Add blue dot at (0, 0)
+  ctx.fillStyle = 'blue';
+  ctx.beginPath();
+  ctx.arc(0, 0, 8, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Add red dot at (0, 360)
+  ctx.fillStyle = 'red';
+  ctx.beginPath();
+  ctx.arc(0, 360, 8, 0, 2 * Math.PI);
+  ctx.fill();
+
+  // Add yellow dot at (240, 360)
+  ctx.fillStyle = 'orange';
+  ctx.beginPath();
+  ctx.arc(240, 360, 8, 0, 2 * Math.PI);
+  ctx.fill();
+
   let currentX = 0;
   let currentY = 0;
   let currentHeading = 0;
@@ -32,7 +50,7 @@ export function draw(ctx, data) {
     currentY = newY;
     currentHeading += heading;
   }
-}
+};
 
 export function useEstimateCanvas(data, canvasWidth, canvasHeight) {
   const canvasRefEstimate = useRef(null);
