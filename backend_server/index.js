@@ -87,13 +87,44 @@ app.get("/api/flag", (req, res) => {
     res.json({ flag });
 });
 
+app.get("/heading", (req, res) => {
+    // Get heading from query string and convert it into an integer
+    let heading = Number(req.query.heading);
+    con.query("INSERT INTO Heading (timestamp, heading) VALUES (?, ?)",
+        [Date.now(), heading], (err, _result) => {
+            if (err) {
+                console.log(err)
+            }
+        });
+    con.query("SELECT * FROM Heading", function (err, result, _fields) {
+        if (err) throw err;
+        res.json(result)
+    });
+
+
+})
+
+app.get("/steps", (req, res) => {
+    // Get heading from query string and convert it into an integer
+    let steps = Number(req.query.steps);
+    con.query("INSERT INTO Steps (timestamp, steps) VALUES (?, ?)",
+        [Date.now(), steps], (err, _result) => {
+            if (err) {
+                console.log(err)
+            }
+        });
+    con.query("SELECT * FROM Steps", function (err, result, _fields) {
+        if (err) throw err;
+        res.json(result)
+    });
+})
+
 app.get("/LDR", (req, res) => {
     const L = req.query.L;
     const R = req.query.R;
     const F = req.query.F;
-    const FR= req.query.FR;
+    const FR = req.query.FR;
     const FL = req.query.FL;
-    
 })
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -164,7 +195,7 @@ app.get('/beacon', (req, res) => {
         D -= 320;
         const angle = (D / 320) * 24;
         let computedAngle = angle + rotation
-        if (computedAngle < 0){
+        if (computedAngle < 0) {
             computedAngle += 360
         }
         return beaconsAngles.push(computedAngle);
@@ -178,11 +209,11 @@ app.get('/beacon', (req, res) => {
 
     //thetaYR
     let alpha = Math.abs(beaconsAngles[1] - beaconsAngles[0]);
-    if (alpha > 180){alpha = 360-alpha;}
+    if (alpha > 180) { alpha = 360 - alpha; }
     console.log("alpha: " + alpha)
     // thetaBR
     let gamma = Math.abs(beaconsAngles[2] - beaconsAngles[1]);
-    if (gamma > 180){gamma = 360-gamma;}
+    if (gamma > 180) { gamma = 360 - gamma; }
     console.log("gamma: " + gamma)
     beaconsAngles = []
     // Inputs
@@ -273,15 +304,15 @@ app.get('/beacon', (req, res) => {
         startAngleR: beaconsAngles[1],
         startAngleB: beaconsAngles[2],
         thetaYR: alpha,
-        thetaBR: gamma, 
+        thetaBR: gamma,
         distanceBP: BP,
         distanceRP: RP,
-        distanceYP: YP, 
+        distanceYP: YP,
         _thetaRBY: RBY,
         _thetaBRY: BRY,
         _thetaBYR: BYR,
         _distanceBR: BR,
-        _distanceBY: BY, 
+        _distanceBY: BY,
         _distanceRY: RY,
     };
 

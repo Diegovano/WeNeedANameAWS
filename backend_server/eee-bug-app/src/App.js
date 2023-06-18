@@ -2,6 +2,39 @@ import React, { useEffect, useState } from "react";
 import "./styles.css";
 import { useCanvas } from "./BeaconCanvas";
 import { DebugTerminal } from "./DebugTerminal"
+import { useEstimateCanvas } from "./EstimateCanvas";
+
+function useEstimateData() { 
+  const [estimate, setEstimate] = useState([]);
+
+  const fetchEstimateData = () => {
+    Promise.all([
+      fetch("http://54.82.44.87:3001/steps").then(res => res.json()),
+      fetch("http://54.82.44.87:3001/heading").then(res => res.json())
+    ])
+    .then(([stepsData, headingData]) => {
+      const combinedData = stepsData.map((step, index) => {
+        return {
+          steps: step.steps,
+          heading: headingData[index].heading
+        };
+      });
+      setEstimate(combinedData);
+    })
+    .catch(err => alert(err));
+  };
+
+  useEffect(() => {
+    fetchEstimateData();
+    // Set interval to fetch data every 1500 milliseconds
+    const interval = setInterval(fetchEstimateData, 1500);
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const estimateData = estimate.length > 0 ? estimate : [];
+  return [estimateData];
+}
 
 function useData() {
   const [coordinates, setCoordinates] = useState([]);
@@ -81,15 +114,24 @@ function MazeComponent() {
   const canvasHeight = 360;
 
   const [coordData] = useData();
-  // console.log(coordData)
+  const [estimateData] = useEstimateData();
   const canvasRef = useCanvas(coordData, canvasWidth, canvasHeight);
+  const canvasRefEstimate = useEstimateCanvas(estimateData, canvasWidth, canvasHeight);
 
+  const [activeCanvas, setActiveCanvas] = useState("canvas1");
+
+  const handleToggleCanvas = () => {
+    setActiveCanvas(activeCanvas === "canvas1" ? "canvas2" : "canvas1");
+  };
+
+  
   return (
     <main className="App-main">
     <div id="header">
       <center>
         <button onClick={deleteData}>Delete Data</button>
         <button onClick={handleClick}>Triangulate</button>
+        <button onClick={handleToggleCanvas}>Toggle Canvas</button>
       </center>
     </div>
     <div id="container">
@@ -97,13 +139,22 @@ function MazeComponent() {
         <DebugTerminal />
       </div>
       <div id="canvas">
-        <canvas
-          className="App-canvas"
-          ref={canvasRef}
-          width={canvasWidth}
-          height={canvasHeight}
-        />
-      </div>
+          {activeCanvas === "canvas1" ? (
+            <canvas
+              className="App-canvas"
+              ref={canvasRef}
+              width={canvasWidth}
+              height={canvasHeight}
+            />
+          ) : (
+            <canvas
+              className="App-canvas"
+              ref={canvasRefEstimate}
+              width={canvasWidth}
+              height={canvasHeight}
+            />
+          )}
+        </div>
       <div id="clear"></div>
     </div>
   </main>
