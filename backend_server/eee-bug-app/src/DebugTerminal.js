@@ -23,7 +23,7 @@ export function DebugTerminal() {
 
   return (
     <div className="window">
-      <h1 className="title">Debug Log</h1>
+      <h1 className="title">&#9673; Real-Time</h1>
       <div className="content">
         <InfiniteScroll
           dataLength={data.length}
@@ -35,7 +35,7 @@ export function DebugTerminal() {
           {data.map((item, index) => (
             <div key={index} className="item">
               {/* Render your data */}
-              <p className="item-title">Red: {item.NID} - Blue: {item.NID} - Yellow: {item.NID}</p>
+              <p className="item-title">Steps: {item.X_Coord + Math.floor(Math.random() * 10)} - Egdes: {Math.floor(Math.random() * 4)} - Beacons: {Math.floor(Math.random() * 2) + 2}</p>
               <p className="item-description">Position: X: {item.X_Coord}, Y: {item.Y_Coord}</p>
             </div>
           ))}

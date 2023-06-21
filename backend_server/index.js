@@ -19,18 +19,18 @@ app.use(cors({
 
 
 var mysql = require('mysql');
-const { time, Console } = require("console");
-// var con = mysql.createConnection(
-//     {
-//         host: "54.82.44.87",
-//         user: "username",
-//         password: "usrpwd",
-//         database: "MazeDB"
-//     });
-// con.connect(function (err) {
-//     if (err) throw err;
-//     console.log("Successfully connected to the database...\n");
-// });
+const { time } = require("console");
+var con = mysql.createConnection(
+    {
+        host: "54.82.44.87",
+        user: "username",
+        password: "usrpwd",
+        database: "MazeDB"
+    });
+con.connect(function (err) {
+    if (err) throw err;
+    console.log("Successfully connected to the database...\n");
+});
 
 app.get("/mazeQuery", (_req, res) => {
     con.query("SELECT * FROM Nodes", function (err, result, _fields) {
@@ -122,39 +122,14 @@ app.get("/steps", (req, res) => {
     });
 })
 
-// Keep track of motor position
-let rover_X = 0, rover_Y = 0, rover_H = 0;
-
-app.post("/api/motor", (req, res) => {
-    console.log("Recevied from rover:");
-    console.log(req.body);
-
-    res.sendStatus(200);
-    if (req.body["type"] == 'distance') {
-        let dist = req.body["value"];
-        let deltaX = Math.sin((rover_H)) * dist;
-        let deltaY = Math.cos((rover_H)) * dist;
-
-        rover_X += deltaX;
-        rover_Y += deltaY;
-
-        console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
-    } else if (req.body["type"] == 'angle') {
-        let delta_H = req.body["value"];
-        rover_H += delta_H;
-        console.log("Rover turned by %f", delta_H.toFixed(2));
-    }
-    console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
-})
-
-
-
 app.get("/LDR", (req, res) => {
-    const L = req.query.L;
-    const R = req.query.R;
-    const F = req.query.F;
-    const FR = req.query.FR;
-    const FL = req.query.FL;
+    let L = req.query.L; //Left
+    let R = req.query.R; //Right
+    let F = req.query.F; // Forward 
+    let FR = req.query.FR; // Forward Left 
+    let FL = req.query.FL; // Forward Right
+
+
 })
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
