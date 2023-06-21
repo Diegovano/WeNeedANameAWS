@@ -5,35 +5,28 @@ import { DebugTerminal } from "./DebugTerminal"
 import { useEstimateCanvas } from "./EstimateCanvas";
 
 function useEstimateData() { 
-  const [estimate, setEstimate] = useState([]);
+  const [estimateCoordinates, setEstimateCoordinates] = useState([]);
 
-  const fetchEstimateData = () => {
-    Promise.all([
-      fetch("http://54.82.44.87:3001/steps").then(res => res.json()),
-      fetch("http://54.82.44.87:3001/heading").then(res => res.json())
-    ])
-    .then(([stepsData, headingData]) => {
-      const combinedData = stepsData.map((step, index) => {
-        return {
-          steps: step.steps,
-          heading: headingData[index].heading
-        };
-      });
-      setEstimate(combinedData);
-    })
-    .catch(err => alert(err));
+  const fetchData = () => {
+    fetch("http://54.82.44.87:3001/estimateMazeQuery")
+      .then((res) => res.json())
+      .then((data) => {
+        setEstimateCoordinates(data.map(item => ({ x: item.X_Coord, y: item.Y_Coord })));
+      })
+      .catch((err) => alert(err));
   };
 
+
   useEffect(() => {
-    fetchEstimateData();
-    // Set interval to fetch data every 1500 milliseconds
-    const interval = setInterval(fetchEstimateData, 1500);
+    fetchData();
+    // Set interval to fetch data every 3000 milliseconds
+    const interval = setInterval(fetchData, 3000);
 
     return () => clearInterval(interval);
   }, []);
 
-  const estimateData = estimate.length > 0 ? estimate : [];
-  return [estimateData];
+  const EstimateCoordData = estimateCoordinates.length > 0 ? estimateCoordinates : [];
+  return [EstimateCoordData];
 }
 
 function useData() {

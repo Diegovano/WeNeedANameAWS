@@ -162,6 +162,13 @@ app.post("/api/motor", (req, res) => {
 
     }
 
+    app.get("/estimateMazeQuery", (_req, res) => {
+        con.query("SELECT X_Coord, Y_Coord FROM Positions", function (err, result, _fields) {
+            if (err) throw err;
+            res.json(result)
+        });
+    });
+
 
     // if (req.body["type"] == 'distance') {
     //     let dist = req.body["value"];

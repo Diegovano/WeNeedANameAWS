@@ -1,73 +1,67 @@
 import React, { useEffect, useRef } from 'react';
 
-export function drawEstimate(ctx, data) {
-  console.log("attempting to draw");
-  ctx.setLineDash([2, 4]);
-  ctx.strokeStyle = 'purple';
 
-  // Add blue dot at (0, 0)
-  ctx.fillStyle = 'blue';
-  ctx.beginPath();
-  ctx.arc(0, 0, 8, 0, 2 * Math.PI);
-  ctx.fill();
-
-  // Add red dot at (0, 360)
-  ctx.fillStyle = 'red';
-  ctx.beginPath();
-  ctx.arc(0, 360, 8, 0, 2 * Math.PI);
-  ctx.fill();
-
-  // Add yellow dot at (240, 360)
-  ctx.fillStyle = 'orange';
-  ctx.beginPath();
-  ctx.arc(240, 360, 8, 0, 2 * Math.PI);
-  ctx.fill();
-
-  let currentX = 0;
-  let currentY = 0;
-  let currentHeading = 0;
-
-  for (const { steps, heading } of data) {
-    if (heading !== currentHeading) {
-      ctx.beginPath();
-      ctx.arc(currentX, currentY, 2, 0, 2 * Math.PI);
-      ctx.fill();
-    }
-
-    const deltaY = Math.sin((currentHeading + heading)) * steps;
-    const deltaX = Math.cos((currentHeading + heading)) * steps;
-
-    const newX = currentX + deltaX;
-    const newY = currentY + deltaY;
-
+export function drawEstimate(ctx, coordinates) {
+    console.log("attempting to draw");
+    ctx.fillStyle = 'green';
+    coordinates.forEach((coordinate) => {
+        ctx.beginPath();
+        ctx.arc(coordinate.x, coordinate.y, 2, 0, 2 * Math.PI);
+        ctx.fill();
+    });
+    // Add blue dot at (0, 0)
+    ctx.fillStyle = 'blue';
     ctx.beginPath();
-    ctx.moveTo(currentX, currentY);
-    ctx.lineTo(newX, newY);
-    ctx.stroke();
+    ctx.arc(0, 0, 8, 0, 2 * Math.PI);
+    ctx.fill();
 
-    currentX = newX;
-    currentY = newY;
-    currentHeading += heading;
-  }
+    // Add red dot at (0, 360)
+    ctx.fillStyle = 'red';
+    ctx.beginPath();
+    ctx.arc(0, 360, 8, 0, 2 * Math.PI);
+    ctx.fill();
+
+    // Add yellow dot at (240, 360)
+    ctx.fillStyle = 'orange';
+    ctx.beginPath();
+    ctx.arc(240, 360, 8, 0, 2 * Math.PI);
+    ctx.fill();
+
 };
 
-export function useEstimateCanvas(data, canvasWidth, canvasHeight) {
-  const canvasRefEstimate = useRef(null);
+export function useEstimateCanvas(coordData, canvasWidth, canvasHeight) {
+    const canvasRef = useRef(null);
+    useEffect(() => {
+        const canvasObj = canvasRef.current;
+        if (canvasObj) {
+            const ctx = canvasObj.getContext('2d');
+            if (ctx) {
+                ctx.clearRect(0, 0, canvasWidth, canvasHeight);
+                drawEstimate(ctx, coordData);
+                // Draw lines between consecutive points
+                ctx.beginPath();
+                ctx.setLineDash([2, 4]); 
+                ctx.strokeStyle = "red";
+                ctx.lineWidth = 2;
+                for (let i = 0; i < coordData.length - 1; i++) {
+                    const startPoint = coordData[i];
+                    const endPoint = coordData[i + 1];
+                    ctx.moveTo(startPoint.x, startPoint.y);
+                    ctx.lineTo(endPoint.x, endPoint.y);
+                }
+                ctx.stroke();
+            } else {
+                console.log("getContext() returned null");
+            }
+        } else {
+            console.log("canvasRef.current is null");
+        }
+    }, [coordData, canvasWidth, canvasHeight]);
 
-  useEffect(() => {
-    const canvasObj = canvasRefEstimate.current;
-    if (canvasObj) {
-      const ctx = canvasObj.getContext('2d');
-      if (ctx) {
-        ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-        drawEstimate(ctx, data);
-      } else {
-        console.log('getContext() returned null');
-      }
-    } else {
-      console.log('canvasRefEstimate.current is null');
-    }
-  }, [data, canvasWidth, canvasHeight]);
-
-  return canvasRefEstimate;
+    return canvasRef;
 }
+
+
+
+
+
