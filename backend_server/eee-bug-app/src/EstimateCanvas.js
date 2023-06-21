@@ -29,23 +29,23 @@ export function drawEstimate(ctx, coordinates) {
 
 };
 
-export function useEstimateCanvas(coordData, canvasWidth, canvasHeight) {
-    const canvasRef = useRef(null);
+export function useEstimateCanvas(estimateData, canvasWidth, canvasHeight) {
+    const canvasRefEstimate = useRef(null);
     useEffect(() => {
-        const canvasObj = canvasRef.current;
+        const canvasObj = canvasRefEstimate.current;
         if (canvasObj) {
             const ctx = canvasObj.getContext('2d');
             if (ctx) {
                 ctx.clearRect(0, 0, canvasWidth, canvasHeight);
-                drawEstimate(ctx, coordData);
+                drawEstimate(ctx, estimateData);
                 // Draw lines between consecutive points
                 ctx.beginPath();
                 ctx.setLineDash([2, 4]); 
                 ctx.strokeStyle = "red";
                 ctx.lineWidth = 2;
-                for (let i = 0; i < coordData.length - 1; i++) {
-                    const startPoint = coordData[i];
-                    const endPoint = coordData[i + 1];
+                for (let i = 0; i < estimateData.length - 1; i++) {
+                    const startPoint = estimateData[i];
+                    const endPoint = estimateData[i + 1];
                     ctx.moveTo(startPoint.x, startPoint.y);
                     ctx.lineTo(endPoint.x, endPoint.y);
                 }
@@ -54,11 +54,11 @@ export function useEstimateCanvas(coordData, canvasWidth, canvasHeight) {
                 console.log("getContext() returned null");
             }
         } else {
-            console.log("canvasRef.current is null");
+            console.log("canvasRefEstimate.current is null");
         }
-    }, [coordData, canvasWidth, canvasHeight]);
+    }, [estimateData, canvasWidth, canvasHeight]);
 
-    return canvasRef;
+    return canvasRefEstimate;
 }
 
 

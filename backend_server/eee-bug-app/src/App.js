@@ -25,8 +25,8 @@ function useEstimateData() {
     return () => clearInterval(interval);
   }, []);
 
-  const EstimateCoordData = estimateCoordinates.length > 0 ? estimateCoordinates : [];
-  return [EstimateCoordData];
+  const estimateData = estimateCoordinates.length > 0 ? estimateCoordinates : [];
+  return [estimateData];
 }
 
 function useData() {
