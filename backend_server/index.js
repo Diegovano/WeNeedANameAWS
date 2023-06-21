@@ -128,9 +128,59 @@ app.get("/LDR", (req, res) => {
     let F = req.query.F; // Forward 
     let FR = req.query.FR; // Forward Left 
     let FL = req.query.FL; // Forward Right
+}); 
+
+// Keep track of motor position
+let rover_X = 0, rover_Y = 0, rover_H = 0;
+
+app.post("/api/motor", (req, res) => {
+    console.log("Recevied from rover:");
+    let JSONArray = req.body;
+    console.log(req.body);
+    res.sendStatus(200);
+    for (var object in JSONArray){
+        if (object.type == 'distance'){
+            let dist = object.val;
+            let deltaX = Math.sin((rover_H)) * dist;
+            let deltaY = Math.cos((rover_H)) * dist;
+            rover_X += deltaX;
+            rover_Y += deltaY;
+            console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
+        } else if (object.type == 'angle'){
+            let delta_H = object.val;
+            rover_H += delta_H;
+            console.log("Rover turned by %f", delta_H.toFixed(2));
+        }
+        console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
+
+        con.query("INSERT INTO Postions (X_Coord, Y_Coord, Heading) VALUES (?, ?, ?)",
+        [rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2)], (err, _result) => {
+            if (err) {
+                console.log(err)
+            }
+        });
+
+    }
 
 
+    // if (req.body["type"] == 'distance') {
+    //     let dist = req.body["value"];
+    //     let deltaX = Math.sin((rover_H)) * dist;
+    //     let deltaY = Math.cos((rover_H)) * dist;
+
+    //     rover_X += deltaX;
+    //     rover_Y += deltaY;
+
+    //     console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
+    // } else if (req.body["type"] == 'angle') {
+    //     let delta_H = req.body["value"];
+    //     rover_H += delta_H;
+    //     console.log("Rover turned by %f", delta_H.toFixed(2));
+    // }
+    
 })
+
+
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Driving Algorithm Outline: 
