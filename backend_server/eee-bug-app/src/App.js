@@ -92,55 +92,6 @@ function sendResetRequest() {
     });
 }
 
-// function blueState() {
-//   fetch("http://54.82.44.87:3001/api/receiveBlue")
-//     .then(res => res.json())
-//     .then(data => {
-//       const blueBeacon = data.blueBeacon;
-//       if (blueBeacon) {
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     })
-//     .catch(error => {
-//       console.log("Error:", error);
-//     });
-// }
-
-// function redState() {
-//   fetch("http://54.82.44.87:3001/api/receiveRed")
-//     .then(res => res.json())
-//     .then(data => {
-//       const redBeacon = data.redBeacon;
-//       if (redBeacon) {
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     })
-//     .catch(error => {
-//       console.log("Error:", error);
-//     });
-// }
-
-// function yellowState() {
-//   fetch("http://54.82.44.87:3001/api/receiveYellow")
-//     .then(res => res.json())
-//     .then(data => {
-//       const yellowBeacon = data.yellowBeacon;
-//       if (yellowBeacon) {
-//         return true;
-//       } else {
-//         return false;
-//       }
-//     })
-//     .catch(error => {
-//       console.log("Error:", error);
-//     });
-// }
-
-
 // Function to handle button click
 function handleClick() {
   sendTriangulateRequest();

@@ -156,38 +156,42 @@ app.get("/estimateMazeQuery", (_req, res) => {
     });
 });
 
-let flagBlueTimeOut;
+let blueBeacon, redBeacon, yellowBeacon;
+let flagBlueTimeout;
 app.post("/api/receiveBlue", (req, res) => {
-    let blueBeacon = true;
-    clearTimeout(flagBlueTimeOut);
-    flagBlueTimeOut = setTimeout(() => {
-        blueBeacon = false;
+    blueBeacon = true;
+    clearTimeout(flagBlueTimeout);
+    flagBlueTimeout = setTimeout(() => {
+        setBlueState(false);
         console.log("blue is off");
-    }, 3000);
+  }, 3000);
 
-    res.sendStatus(200);
+  res.sendStatus(200);
 });
-let flagRedTimeOut;
+
+let flagRedTimeout;
 app.post("/api/receiveRed", (req, res) => {
-    let redBeacon = true;
-    clearTimeout(flagRedTimeOut);
-    flagRedTimeOut = setTimeout(() => {
-         redBeacon = false;
-        console.log("red is off");
-    }, 3000);
+  
+  clearTimeout(flagRedTimeout);
+  setRedState(true);
+  flagRedTimeout = setTimeout(() => {
+    setRedState(false);
+    console.log("red is off");
+  }, 3000);
 
-    res.sendStatus(200);
+  res.sendStatus(200);
 });
-let flagYellowTimeOut;
-app.post("/api/receiveYellow", (req, res) => {
-    let yellowBeacon = true;
-    clearTimeout(flagYellowTimeOut);
-    flagYellowTimeOut = setTimeout(() => {
-        yellowBeacon = false;
-        console.log("yellow");
-    }, 3000);
 
-    res.sendStatus(200);
+let flagYellowTimeout;
+app.post("/api/receiveYellow", (req, res) => {
+  clearTimeout(flagYellowTimeout);
+  setYellowState(true);
+  flagYellowTimeout = setTimeout(() => {
+    setYellowState(false);
+    console.log("yellow is off");
+  }, 3000);
+
+  res.sendStatus(200);
 });
 
 
