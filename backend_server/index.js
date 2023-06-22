@@ -348,10 +348,7 @@ app.get('/beacon', (req, res) => {
     let X_Coord = parseInt((currentPosition.x));
     let Y_Coord = parseInt((currentPosition.y));
 
-    // Global
-    global.Global_X_Coord = X_Coord;
-    global.Global_Y_Coord = Y_Coord;
-
+    
     con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
         [X_Coord, Y_Coord], (err, _result) => {
             if (err) {
