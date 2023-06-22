@@ -117,6 +117,7 @@ app.post("/api/motor", (req, res) => {
         if (JSONArray[object]["type"] == 'distance'){
 	    console.log("DISTANCE")
             let dist = JSONArray[object]["value"];
+            global.GlobalDistance = dist;
             let deltaX = Math.sin((rover_H)) * dist;
             let deltaY = Math.cos((rover_H)) * dist;
             rover_X += deltaX;
@@ -125,12 +126,13 @@ app.post("/api/motor", (req, res) => {
         } else if (JSONArray[object]["type"] == 'angle'){
             console.log("ANGLE")
             let delta_H = JSONArray[object]["value"];
+            global.GlobalHeading = delta_H;
             rover_H += delta_H;
             console.log("Rover turned by %f", delta_H.toFixed(2));
         }
 
-        global.GlobalDistance = dist;
-        global.GlobalHeading = delta_H;
+        
+        
         console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
 
         con.query("INSERT INTO Positions (X_Coord, Y_Coord, Heading) VALUES (?, ?, ?)",
