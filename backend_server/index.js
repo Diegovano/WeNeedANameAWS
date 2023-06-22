@@ -117,7 +117,6 @@ app.post("/api/motor", (req, res) => {
         if (JSONArray[object]["type"] == 'distance'){
 	    console.log("DISTANCE")
             let dist = JSONArray[object]["value"];
-            global.GlobalDistance = dist;
             let deltaX = Math.sin((rover_H)) * dist;
             let deltaY = Math.cos((rover_H)) * dist;
             rover_X += deltaX;
@@ -126,14 +125,18 @@ app.post("/api/motor", (req, res) => {
         } else if (JSONArray[object]["type"] == 'angle'){
             console.log("ANGLE")
             let delta_H = JSONArray[object]["value"];
-            global.GlobalHeading = delta_H;
             rover_H += delta_H;
             console.log("Rover turned by %f", delta_H.toFixed(2));
         }
 
-        
-        
         console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
+
+        con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)", 
+            [X_Coord, Y_Coord, dist, delta_H], (err, _result) => {
+                if (err) {
+                    console.log(err);
+                }
+        });
 
         con.query("INSERT INTO Positions (X_Coord, Y_Coord, Heading) VALUES (?, ?, ?)",
         [rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2)], (err, _result) => {
@@ -363,15 +366,6 @@ app.get('/beacon', (req, res) => {
     };
 
     res.json(responseData);
-});
-
-app.get("/frontEndRelay", (_req, res) => {
-    con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)", 
-    [Global_X_Coord, Global_Y_Coord, GlobalDistance, GlobalHeading], (err, _result) => {
-        if (err) {
-            console.log(err);
-        }
-    });
 });
 
 app.get("/Display", (_req, res) => {
