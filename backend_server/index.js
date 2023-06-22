@@ -116,39 +116,39 @@ app.get("/api/flag", (req, res) => {
     res.json({ flag });
 });
 
-app.get("/heading", (req, res) => {
-    // Get heading from query string and convert it into an integer
-    let heading = parseInt(req.query['heading']);
-    let timestamp = Date.now()
-    con.query("INSERT INTO Headings (HID, heading) VALUES (?, ?)",
-        [timestamp, heading], (err, _result) => {
-            if (err) {
-                console.log(err)
-            }
-        });
-    con.query("SELECT * FROM Headings", function (err, result, _fields) {
-        if (err) throw err;
-        res.json(result)
-    });
+// app.get("/heading", (req, res) => {
+//     // Get heading from query string and convert it into an integer
+//     let heading = parseInt(req.query['heading']);
+//     let timestamp = Date.now()
+//     con.query("INSERT INTO Headings (HID, heading) VALUES (?, ?)",
+//         [timestamp, heading], (err, _result) => {
+//             if (err) {
+//                 console.log(err)
+//             }
+//         });
+//     con.query("SELECT * FROM Headings", function (err, result, _fields) {
+//         if (err) throw err;
+//         res.json(result)
+//     });
 
 
-})
+// })
 
-app.get("/steps", (req, res) => {
-    // Get heading from query string and convert it into an integer
-    let steps = parseInt(req.query['steps']);
-    let timestamp = Date.now()
-    con.query("INSERT INTO Steps (SID, steps) VALUES (?, ?)",
-        [timestamp, steps], (err, _result) => {
-            if (err) {
-                console.log(err)
-            }
-        });
-    con.query("SELECT * FROM Steps", function (err, result, _fields) {
-        if (err) throw err;
-        res.json(result)
-    });
-})
+// app.get("/steps", (req, res) => {
+//     // Get heading from query string and convert it into an integer
+//     let steps = parseInt(req.query['steps']);
+//     let timestamp = Date.now()
+//     con.query("INSERT INTO Steps (SID, steps) VALUES (?, ?)",
+//         [timestamp, steps], (err, _result) => {
+//             if (err) {
+//                 console.log(err)
+//             }
+//         });
+//     con.query("SELECT * FROM Steps", function (err, result, _fields) {
+//         if (err) throw err;
+//         res.json(result)
+//     });
+// })
 
 app.get("/LDR", (req, res) => {
     let L = req.query.L; //Left
@@ -196,23 +196,6 @@ app.post("/api/motor", (req, res) => {
             res.json(result)
         });
     });
-
-
-    // if (req.body["type"] == 'distance') {
-    //     let dist = req.body["value"];
-    //     let deltaX = Math.sin((rover_H)) * dist;
-    //     let deltaY = Math.cos((rover_H)) * dist;
-
-    //     rover_X += deltaX;
-    //     rover_Y += deltaY;
-
-    //     console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
-    // } else if (req.body["type"] == 'angle') {
-    //     let delta_H = req.body["value"];
-    //     rover_H += delta_H;
-    //     console.log("Rover turned by %f", delta_H.toFixed(2));
-    // }
-    
 })
 
 
