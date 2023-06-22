@@ -6,6 +6,33 @@ const PORT = process.env.NODE_PORT || 3001;
 const path = require('path')
 const app = express();
 
+const { WebSocketServer, WebSocket } = require('ws'); // websocket for vehicle navigation
+
+try {
+  const wss = new WebSocketServer({ port: 8080 });
+  wss.on("listening", (ws) => {
+    console.log("Websocket Server ready!")
+  });
+  wss.on('connection', function connection(ws) {
+    console.log("Got Connection!");
+    ws.on('error', console.error);
+    
+    ws.on('message', function message(data) {
+        console.log('received: %s', data);
+    });
+    
+    ws.send('something');
+  });
+} catch (error) {
+  console.log(`Error creating websocket server: ${error.message}`);
+}
+
+// const ws1 = new WebSocket("ws://127.0.0.1:8080");
+
+// ws1.on("open", () => {
+//   ws1.send("hello local!");
+// });
+
 app.use(express.static(path.resolve(__dirname, './eee-bug-app/build')));
 
 app.use(bodyParser.json());
