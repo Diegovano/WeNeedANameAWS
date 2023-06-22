@@ -67,7 +67,10 @@ app.get("/api/truncate", (_req, _res) => {
     con.query("TRUNCATE TABLE Nodes", (err, _result) => {
         if (err) throw err;
     })
-})
+    con.query("TRUNCATE TABLE Positions", (err, _result) => {
+	if (err) throw err;
+   }) 
+});
 
 
 // Initialize flag value
@@ -105,19 +108,23 @@ let rover_X = 0, rover_Y = 0, rover_H = 0;
 
 app.post("/api/motor", (req, res) => {
     console.log("Recevied from rover:");
+    console.log("REQ "+req)
     let JSONArray = req.body;
     console.log(req.body);
     res.sendStatus(200);
+   console.log("START FOR")
     for (var object in JSONArray){
-        if (object["type"] == 'distance'){
-            let dist = object["value"];
+        if (JSONArray[object]["type"] == 'distance'){
+	    console.log("DISTANCE")
+            let dist = JSONArray[object]["value"];
             let deltaX = Math.sin((rover_H)) * dist;
             let deltaY = Math.cos((rover_H)) * dist;
             rover_X += deltaX;
             rover_Y += deltaY;
             console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
-        } else if (object["type"] == 'angle'){
-            let delta_H = object["value"];
+        } else if (JSONArray[object]["type"] == 'angle'){
+            console.log("ANGLE")
+            let delta_H = JSONArray[object]["value"];
             rover_H += delta_H;
             console.log("Rover turned by %f", delta_H.toFixed(2));
         }
@@ -126,7 +133,7 @@ app.post("/api/motor", (req, res) => {
         global.GlobalHeading = delta_H;
         console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
 
-        con.query("INSERT INTO Postions (X_Coord, Y_Coord, Heading) VALUES (?, ?, ?)",
+        con.query("INSERT INTO Positions (X_Coord, Y_Coord, Heading) VALUES (?, ?, ?)",
         [rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2)], (err, _result) => {
             if (err) {
                 console.log(err)
