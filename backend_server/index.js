@@ -165,7 +165,7 @@ app.get("/estimateMazeQuery", (_req, res) => {
     setTimeout(() => {
       blueState = false;
       console.log("Blue beacon is off");
-    }, 3000);
+    }, 7000);
     res.sendStatus(200);
   });
 
@@ -178,7 +178,7 @@ app.get("/estimateMazeQuery", (_req, res) => {
     setTimeout(() => {
       redState = false;
       console.log("Red beacon is off");
-    }, 3000);
+    }, 7000);
     res.sendStatus(200);
   });
 
@@ -191,7 +191,7 @@ app.get("/estimateMazeQuery", (_req, res) => {
     setTimeout(() => {
       yellowState = false;
       console.log("Yellow beacon is off");
-    }, 3000);
+    }, 7000);
     res.sendStatus(200);
   });
   

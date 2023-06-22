@@ -112,12 +112,12 @@ function MazeComponent() {
 
   useEffect(() => {
     fetchBlueBeaconStatus();
-    const interval = setInterval(fetchBlueBeaconStatus, 2000); // Poll every 2 seconds
+    const interval = setInterval(fetchBlueBeaconStatus, 1000); // Poll every 1 second
     return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, []);
 
   const fetchBlueBeaconStatus = () => {
-    fetch("http://54.82.44.87:3001:3001/api/blueBeacon")
+    fetch("http://54.82.44.87:3001/api/blueBeacon")
       .then((res) => res.json())
       .then((data) => {
         setBlueBeacon(data.blueBeacon);
@@ -129,15 +129,16 @@ function MazeComponent() {
 
   useEffect(() => {
     fetchRedBeaconStatus();
-    const interval = setInterval(fetchRedBeaconStatus, 2000); // Poll every 2 seconds
+    const interval = setInterval(fetchRedBeaconStatus, 1000); // Poll every 1 second
     return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, []);
 
   const fetchRedBeaconStatus = () => {
-    fetch("http://54.82.44.87:3001:3001/api/redBeacon")
+    fetch("http://54.82.44.87:3001/api/redBeacon")
       .then((res) => res.json())
       .then((data) => {
         setRedBeacon(data.redBeacon);
+        console.log("BLUE BEACON: "+data.blueBeacon)
       })
       .catch((error) => {
         console.log("Error:", error);
@@ -146,12 +147,12 @@ function MazeComponent() {
 
   useEffect(() => {
     fetchYellowBeaconStatus();
-    const interval = setInterval(fetchYellowBeaconStatus, 2000); // Poll every 2 seconds
+    const interval = setInterval(fetchYellowBeaconStatus, 1000); // Poll every 1 second
     return () => clearInterval(interval); // Cleanup the interval on component unmount
   }, []);
 
   const fetchYellowBeaconStatus = () => {
-    fetch("http://54.82.44.87:3001:3001/api/yellowBeacon")
+    fetch("http://54.82.44.87:3001/api/yellowBeacon")
       .then((res) => res.json())
       .then((data) => {
         setYellowBeacon(data.yellowBeacon);
