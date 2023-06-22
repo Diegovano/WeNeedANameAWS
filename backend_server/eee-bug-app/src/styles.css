@@ -117,6 +117,37 @@ button:hover {
   padding-left: 10px;
 }
 
+#beacons {
+  padding: 10px;
+  border-radius: 5px;
+  color: black;
+  font-size: 15px;
+}
+
+.dot {
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 5px;
+}
+
+.blue {
+  background-color: blue;
+}
+
+.red {
+  background-color: red;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.black {
+  background-color: black;
+}
+
 #clear {
   clear: both;
 }

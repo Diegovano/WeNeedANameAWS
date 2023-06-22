@@ -70,6 +70,9 @@ app.get("/api/truncate", (_req, _res) => {
     con.query("TRUNCATE TABLE Positions", (err, _result) => {
 	if (err) throw err;
    }) 
+   con.query("TRUNCATE TABLE Display", (err, _result) => {
+    if (err) throw err;
+   })
 });
 
 
@@ -108,11 +111,9 @@ let rover_X = 0, rover_Y = 0, rover_H = 0, dist = 0, delta_H = 0;
 
 app.post("/api/motor", (req, res) => {
     console.log("Recevied from rover:");
-    console.log("REQ "+req)
     let JSONArray = req.body;
     console.log(req.body);
     res.sendStatus(200);
-    console.log("START FOR")
     for (var object in JSONArray){
         if (JSONArray[object]["type"] == 'distance'){
 	    console.log("DISTANCE")
@@ -154,6 +155,41 @@ app.get("/estimateMazeQuery", (_req, res) => {
         res.json(result)
     });
 });
+
+let flagBlueTimeOut;
+app.post("/api/receiveBlue", (req, res) => {
+    let blueBeacon = true;
+    clearTimeout(flagBlueTimeOut);
+    flagBlueTimeOut = setTimeout(() => {
+        blueBeacon = false;
+        console.log("blue is off");
+    }, 3000);
+
+    res.sendStatus(200);
+});
+let flagRedTimeOut;
+app.post("/api/receiveRed", (req, res) => {
+    let redBeacon = true;
+    clearTimeout(flagRedTimeOut);
+    flagRedTimeOut = setTimeout(() => {
+         redBeacon = false;
+        console.log("red is off");
+    }, 3000);
+
+    res.sendStatus(200);
+});
+let flagYellowTimeOut;
+app.post("/api/receiveYellow", (req, res) => {
+    let yellowBeacon = true;
+    clearTimeout(flagYellowTimeOut);
+    flagYellowTimeOut = setTimeout(() => {
+        yellowBeacon = false;
+        console.log("yellow");
+    }, 3000);
+
+    res.sendStatus(200);
+});
+
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

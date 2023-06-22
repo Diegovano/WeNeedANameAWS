@@ -4,7 +4,7 @@ import { useCanvas } from "./BeaconCanvas";
 import { DebugTerminal } from "./DebugTerminal"
 import { useEstimateCanvas } from "./EstimateCanvas";
 
-function useEstimateData() { 
+function useEstimateData() {
   const [estimateCoordinates, setEstimateCoordinates] = useState([]);
 
   const fetchData = () => {
@@ -92,6 +92,55 @@ function sendResetRequest() {
     });
 }
 
+// function blueState() {
+//   fetch("http://54.82.44.87:3001/api/receiveBlue")
+//     .then(res => res.json())
+//     .then(data => {
+//       const blueBeacon = data.blueBeacon;
+//       if (blueBeacon) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     })
+//     .catch(error => {
+//       console.log("Error:", error);
+//     });
+// }
+
+// function redState() {
+//   fetch("http://54.82.44.87:3001/api/receiveRed")
+//     .then(res => res.json())
+//     .then(data => {
+//       const redBeacon = data.redBeacon;
+//       if (redBeacon) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     })
+//     .catch(error => {
+//       console.log("Error:", error);
+//     });
+// }
+
+// function yellowState() {
+//   fetch("http://54.82.44.87:3001/api/receiveYellow")
+//     .then(res => res.json())
+//     .then(data => {
+//       const yellowBeacon = data.yellowBeacon;
+//       if (yellowBeacon) {
+//         return true;
+//       } else {
+//         return false;
+//       }
+//     })
+//     .catch(error => {
+//       console.log("Error:", error);
+//     });
+// }
+
+
 // Function to handle button click
 function handleClick() {
   sendTriangulateRequest();
@@ -106,6 +155,43 @@ function MazeComponent() {
   const canvasWidth = 240;
   const canvasHeight = 360;
 
+  const [blueState, setBlueState] = useState(false);
+  const [redState, setRedState] = useState(false);
+  const [yellowState, setYellowState] = useState(false);
+
+  useEffect(() => {
+    fetch("http://54.82.44.87:3001/api/receiveBlue")
+      .then((res) => res.json())
+      .then((data) => {
+        const blueBeacon = data.blueBeacon;
+        setBlueState(blueBeacon);
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+
+    fetch("http://54.82.44.87:3001/api/receiveRed")
+      .then((res) => res.json())
+      .then((data) => {
+        const redBeacon = data.redBeacon;
+        setRedState(redBeacon);
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+
+    fetch("http://54.82.44.87:3001/api/receiveYellow")
+      .then((res) => res.json())
+      .then((data) => {
+        const yellowBeacon = data.yellowBeacon;
+        setYellowState(yellowBeacon);
+      })
+      .catch((error) => {
+        console.log("Error:", error);
+      });
+  }, []);
+
+
   const [coordData] = useData();
   const [estimateData] = useEstimateData();
   const canvasRef = useCanvas(coordData, canvasWidth, canvasHeight);
@@ -117,21 +203,28 @@ function MazeComponent() {
     setActiveCanvas(activeCanvas === "canvas1" ? "canvas2" : "canvas1");
   };
 
-  
+
   return (
     <main className="App-main">
-    <div id="header">
-      <center>
-        <button onClick={deleteData}>Delete Data</button>
-        <button onClick={handleClick}>Triangulate</button>
-        <button onClick={handleToggleCanvas}>Toggle Canvas</button>
-      </center>
-    </div>
-    <div id="container">
-      <div id="debugTerminal">
-        <DebugTerminal />
+      <div id="header">
+        <center>
+          <button onClick={deleteData}>Delete Data</button>
+          <button onClick={handleClick}>Triangulate</button>
+          <button onClick={handleToggleCanvas}>Toggle Canvas</button>
+        </center>
       </div>
-      <div id="canvas">
+      <div id="beacons">
+        <center>
+          <p>
+            Blue Beacon: <span className={blueState ? "dot blue" : "dot black"}></span> Red Beacon: <span className={redState ? "dot red" : "dot black"}></span> Yellow Beacon: <span className={yellowState ? "dot yellow" : "dot black"}></span>
+          </p>
+        </center>
+      </div>
+      <div id="container">
+        <div id="debugTerminal">
+          <DebugTerminal />
+        </div>
+        <div id="canvas">
           {activeCanvas === "canvas1" ? (
             <canvas
               className="App-canvas"
@@ -148,10 +241,10 @@ function MazeComponent() {
             />
           )}
         </div>
-      <div id="clear"></div>
-    </div>
-  </main>
-  
+        <div id="clear"></div>
+      </div>
+    </main>
+
   );
 }
 
