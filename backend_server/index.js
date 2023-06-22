@@ -152,23 +152,6 @@ app.get("/estimateMazeQuery", (_req, res) => {
     });
 });
 
-app.get("/frontEndRelay", (_req, res) => {
-    con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)", 
-    [Global_X_Coord, Global_Y_Coord, GlobalDistance, GlobalHeading], (err, _result) => {
-        if (err) {
-            console.log(err);
-        }
-    });
-});
-
-app.get("/Display", (_req, res) => {
-    con.query("SELECT * FROM Display", function(err, result, _fields) {
-        if (err) throw err;
-        res.json(result)
-    });
-});
-
-
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 // Driving Algorithm Outline: 
@@ -381,6 +364,23 @@ app.get('/beacon', (req, res) => {
 
     res.json(responseData);
 });
+
+app.get("/frontEndRelay", (_req, res) => {
+    con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)", 
+    [Global_X_Coord, Global_Y_Coord, GlobalDistance, GlobalHeading], (err, _result) => {
+        if (err) {
+            console.log(err);
+        }
+    });
+});
+
+app.get("/Display", (_req, res) => {
+    con.query("SELECT * FROM Display", function(err, result, _fields) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
+
 
 
 
