@@ -6,29 +6,6 @@ const PORT = process.env.NODE_PORT || 3001;
 const path = require('path')
 const app = express();
 
-// const { WebSocketServer, WebSocket } = require('ws'); // websocket for vehicle navigation
-
-// try {
-//   const wss = new WebSocketServer({ port: 8080 });
-//   wss.on('connection', function connection(ws) {
-//     ws.on('error', console.error);
-    
-//     ws.on('message', function message(data) {
-//         console.log('received: %s', data);
-//     });
-    
-//     ws.send('something');
-//     });
-// } catch (error) {
-//   console.log(`Error creating websocket server: ${error.message}`);
-// }
-
-// // const ws1 = new WebSocket("ws://127.0.0.1:8080");
-
-// // ws1.on("open", () => {
-// //   ws1.send("hello local!");
-// // });
-
 app.use(express.static(path.resolve(__dirname, './eee-bug-app/build')));
 
 app.use(bodyParser.json());
@@ -42,7 +19,6 @@ app.use(cors({
 
 
 var mysql = require('mysql');
-// const { time } = require("console");
 var con = mysql.createConnection(
     {
         host: "54.82.44.87",
@@ -53,7 +29,7 @@ var con = mysql.createConnection(
 con.connect(function (err) {
     if (err) {
       console.log("Successfully failed to connect to the database...\n");
-      // throw err;
+      throw err;
     }
     else {
       console.log("Successfully connected to the database...\n");
@@ -116,40 +92,6 @@ app.get("/api/flag", (req, res) => {
     res.json({ flag });
 });
 
-// app.get("/heading", (req, res) => {
-//     // Get heading from query string and convert it into an integer
-//     let heading = parseInt(req.query['heading']);
-//     let timestamp = Date.now()
-//     con.query("INSERT INTO Headings (HID, heading) VALUES (?, ?)",
-//         [timestamp, heading], (err, _result) => {
-//             if (err) {
-//                 console.log(err)
-//             }
-//         });
-//     con.query("SELECT * FROM Headings", function (err, result, _fields) {
-//         if (err) throw err;
-//         res.json(result)
-//     });
-
-
-// })
-
-// app.get("/steps", (req, res) => {
-//     // Get heading from query string and convert it into an integer
-//     let steps = parseInt(req.query['steps']);
-//     let timestamp = Date.now()
-//     con.query("INSERT INTO Steps (SID, steps) VALUES (?, ?)",
-//         [timestamp, steps], (err, _result) => {
-//             if (err) {
-//                 console.log(err)
-//             }
-//         });
-//     con.query("SELECT * FROM Steps", function (err, result, _fields) {
-//         if (err) throw err;
-//         res.json(result)
-//     });
-// })
-
 app.get("/LDR", (req, res) => {
     let L = req.query.L; //Left
     let R = req.query.R; //Right
@@ -167,18 +109,21 @@ app.post("/api/motor", (req, res) => {
     console.log(req.body);
     res.sendStatus(200);
     for (var object in JSONArray){
-        if (object.type == 'distance'){
-            let dist = object.val;
+        if (object["type"] == 'distance'){
+            let dist = object["value"];
             let deltaX = Math.sin((rover_H)) * dist;
             let deltaY = Math.cos((rover_H)) * dist;
             rover_X += deltaX;
             rover_Y += deltaY;
             console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
-        } else if (object.type == 'angle'){
-            let delta_H = object.val;
+        } else if (object["type"] == 'angle'){
+            let delta_H = object["value"];
             rover_H += delta_H;
             console.log("Rover turned by %f", delta_H.toFixed(2));
         }
+
+        global.GlobalDistance = dist;
+        global.GlobalHeading = delta_H;
         console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
 
         con.query("INSERT INTO Postions (X_Coord, Y_Coord, Heading) VALUES (?, ?, ?)",
@@ -193,6 +138,22 @@ app.post("/api/motor", (req, res) => {
 
 app.get("/estimateMazeQuery", (_req, res) => {
     con.query("SELECT X_Coord, Y_Coord FROM Positions", function (err, result, _fields) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
+
+app.get("/frontEndRelay", (_req, res) => {
+    con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)", 
+    [Global_X_Coord, Global_Y_Coord, GlobalDistance, GlobalHeading], (err, _result) => {
+        if (err) {
+            console.log(err);
+        }
+    });
+});
+
+app.get("/Display", (_req, res) => {
+    con.query("SELECT * FROM Display", function(err, result, _fields) {
         if (err) throw err;
         res.json(result)
     });
@@ -388,18 +349,13 @@ app.get('/beacon', (req, res) => {
         _distanceBY: BY,
         _distanceRY: RY,
     };
-
-    fs.writeFile('../log.txt', JSON.stringify(content) + ',', { flag: 'a+' }, err => {
-        if (err) {
-            console.error(err);
-        }
-
-
-    });
-
     // Testing purposes:
     let X_Coord = parseInt((currentPosition.x));
     let Y_Coord = parseInt((currentPosition.y));
+
+    // Global
+    global.Global_X_Coord = X_Coord;
+    global.Global_Y_Coord = Y_Coord;
 
     con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
         [X_Coord, Y_Coord], (err, _result) => {
@@ -416,6 +372,8 @@ app.get('/beacon', (req, res) => {
 
     res.json(responseData);
 });
+
+
 
 
 app.get('/*', (_req, res) => {

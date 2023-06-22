@@ -11,7 +11,7 @@ export function DebugTerminal() {
 
   const fetchData = () => {
     // Change to relevant endpoint --> for now dev purpose 
-    fetch(`http://54.82.44.87:3001/mazeQuery`)
+    fetch(`http://54.82.44.87:3001/Display`)
       .then(response => response.json())
       .then(newData => {
         setData(prevData => [...prevData, ...newData]);
@@ -19,6 +19,7 @@ export function DebugTerminal() {
       .catch(error => {
         console.error('Error fetching data:', error);
       });
+
   };
 
   return (
@@ -35,7 +36,7 @@ export function DebugTerminal() {
           {data.map((item, index) => (
             <div key={index} className="item">
               {/* Render your data */}
-              <p className="item-title">Steps: {item.X_Coord + Math.floor(Math.random() * 10)} - Egdes: {Math.floor(Math.random() * 4)} - Beacons: {Math.floor(Math.random() * 2) + 2}</p>
+              <p className="item-title">Steps: {item.Steps} - Heading: {item.Heading} - Edges: {}</p>
               <p className="item-description">Position: X: {item.X_Coord}, Y: {item.Y_Coord}</p>
             </div>
           ))}
