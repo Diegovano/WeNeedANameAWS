@@ -8,24 +8,20 @@ const app = express();
 
 const { WebSocketServer, WebSocket } = require('ws'); // websocket for vehicle navigation
 
-try {
-  const wss = new WebSocketServer({ port: 8080 });
-  wss.on("listening", (ws) => {
-    console.log("Websocket Server ready!")
+const wss = new WebSocketServer({ port: 8080 });
+wss.on("listening", (ws) => {
+  console.log("Websocket Server ready!")
+});
+wss.on('connection', function connection(ws) {
+  console.log("Got Connection!");
+  ws.on('error', console.error);
+  
+  ws.on('message', function message(data) {
+      console.log('received: %s', data);
   });
-  wss.on('connection', function connection(ws) {
-    console.log("Got Connection!");
-    ws.on('error', console.error);
-    
-    ws.on('message', function message(data) {
-        console.log('received: %s', data);
-    });
-    
-    ws.send('something');
-  });
-} catch (error) {
-  console.log(`Error creating websocket server: ${error.message}`);
-}
+  
+  ws.send('something');
+});
 
 // const ws1 = new WebSocket("ws://127.0.0.1:8080");
 
@@ -440,10 +436,6 @@ app.get("/Display", (_req, res) => {
     });
 });
 
-
-
-
-
 app.get('/*', (_req, res) => {
     res.sendFile(path.join(__dirname, './eee-bug-app/build', 'index.html'));
 })
@@ -451,4 +443,30 @@ app.get('/*', (_req, res) => {
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`);
+});
+
+const stdin = process.stdin;
+
+// without this, we would only get streams once enter is pressed
+stdin.setRawMode( true );
+
+// resume stdin in the parent process (node app won't quit all by itself
+// unless an error or process.exit() happens)
+stdin.resume();
+
+// i don't want binary, do you?
+stdin.setEncoding( 'utf8' );
+
+// on any data into stdin
+stdin.on( 'data', function( key ){
+  // ctrl-c ( end of text )
+  if ( key === '\u0003' ) {
+    process.exit();
+  }
+  // write the key to stdout all normal like
+  wss.clients.forEach(function each(client) {
+    if (client.readyState === WebSocket.OPEN) {
+        client.send(key);
+    }
+  })
 });
