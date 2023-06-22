@@ -156,44 +156,45 @@ app.get("/estimateMazeQuery", (_req, res) => {
     });
 });
 
-let blueBeacon, redBeacon, yellowBeacon;
-let flagBlueTimeout;
-app.post("/api/receiveBlue", (req, res) => {
-    blueBeacon = true;
-    clearTimeout(flagBlueTimeout);
-    flagBlueTimeout = setTimeout(() => {
-        setBlueState(false);
-        console.log("blue is off");
-  }, 3000);
+  let blueState = false;
+  app.get("/api/blueBeacon", (req, res) => {
+    res.json({ blueBeacon: blueState });
+  });
+  app.post("/api/receiveBlue", (req, res) => {
+    blueState = true;
+    setTimeout(() => {
+      blueState = false;
+      console.log("Blue beacon is off");
+    }, 3000);
+    res.sendStatus(200);
+  });
 
-  res.sendStatus(200);
-});
+  let redState = false;
+  app.get("/api/redBeacon", (req, res) => {
+    res.json({ redBeacon: redState });
+  });
+  app.post("/api/receiveRed", (req, res) => {
+    redState = true;
+    setTimeout(() => {
+      redState = false;
+      console.log("Red beacon is off");
+    }, 3000);
+    res.sendStatus(200);
+  });
 
-let flagRedTimeout;
-app.post("/api/receiveRed", (req, res) => {
+  let yellowState = false;
+  app.get("/api/yellowBeacon", (req, res) => {
+    res.json({ yellowBeacon: yellowState });
+  });
+  app.post("/api/receiveYellow", (req, res) => {
+    yellowState = true;
+    setTimeout(() => {
+      yellowState = false;
+      console.log("Yellow beacon is off");
+    }, 3000);
+    res.sendStatus(200);
+  });
   
-  clearTimeout(flagRedTimeout);
-  setRedState(true);
-  flagRedTimeout = setTimeout(() => {
-    setRedState(false);
-    console.log("red is off");
-  }, 3000);
-
-  res.sendStatus(200);
-});
-
-let flagYellowTimeout;
-app.post("/api/receiveYellow", (req, res) => {
-  clearTimeout(flagYellowTimeout);
-  setYellowState(true);
-  flagYellowTimeout = setTimeout(() => {
-    setYellowState(false);
-    console.log("yellow is off");
-  }, 3000);
-
-  res.sendStatus(200);
-});
-
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
