@@ -104,7 +104,7 @@ app.get("/LDR", (req, res) => {
 }); 
 
 // Keep track of motor position
-let rover_X = 0, rover_Y = 0, rover_H = 0;
+let rover_X = 0, rover_Y = 0, rover_H = 0, dist = 0, delta_H = 0;
 
 app.post("/api/motor", (req, res) => {
     console.log("Recevied from rover:");
@@ -112,11 +112,11 @@ app.post("/api/motor", (req, res) => {
     let JSONArray = req.body;
     console.log(req.body);
     res.sendStatus(200);
-   console.log("START FOR")
+    console.log("START FOR")
     for (var object in JSONArray){
         if (JSONArray[object]["type"] == 'distance'){
 	    console.log("DISTANCE")
-            let dist = JSONArray[object]["value"];
+            dist = JSONArray[object]["value"];
             let deltaX = Math.sin((rover_H)) * dist;
             let deltaY = Math.cos((rover_H)) * dist;
             rover_X += deltaX;
@@ -124,7 +124,7 @@ app.post("/api/motor", (req, res) => {
             console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
         } else if (JSONArray[object]["type"] == 'angle'){
             console.log("ANGLE")
-            let delta_H = JSONArray[object]["value"];
+            delta_H = JSONArray[object]["value"];
             rover_H += delta_H;
             console.log("Rover turned by %f", delta_H.toFixed(2));
         }
