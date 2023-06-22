@@ -13,7 +13,7 @@ function useEstimateData() {
       .then((data) => {
         setEstimateCoordinates(data.map(item => ({ x: item.X_Coord, y: item.Y_Coord })));
       })
-      .catch((err) => alert(err));
+      .catch((err) => alert("ESTIMATE CANVAS ERROR"));
   };
 
 
