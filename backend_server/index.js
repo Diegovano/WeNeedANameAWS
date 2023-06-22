@@ -132,7 +132,7 @@ app.post("/api/motor", (req, res) => {
         console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
 
         con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)", 
-            [X_Coord, Y_Coord, dist, delta_H], (err, _result) => {
+            [rover_X, rover_Y, dist.toFixed(2), delta_H.toFixed(2)], (err, _result) => {
                 if (err) {
                     console.log(err);
                 }
