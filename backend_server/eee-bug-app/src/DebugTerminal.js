@@ -35,7 +35,8 @@ export function DebugTerminal() {
         >
           {data.map((item, index) => (
             <div key={index} className="item">
-              <p className="item-title">Steps: {item.Steps} - Heading: {item.Heading}</p>
+              <p className="item-description">Distance Travelled: {item.Steps} cm</p>
+              <p className='item-description'>Current Heading: {item.Heading} degrees </p>
               <p className="item-description">Position: X: {item.X_Coord}, Y: {item.Y_Coord}</p>
             </div>
           ))}
