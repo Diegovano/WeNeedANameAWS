@@ -83,14 +83,7 @@ app.get("/testQuery", (req, res) => {
     }, err => {
         console.log(err.message);
     });
-    con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
-        [X_Coord, Y_Coord], (err, _result) => {
-            if (err) {
-                console.log(err)
-            }
 
-        });
-    
     const responseData = {
         X_Coord: parseInt(X_Coord),
         Y_Coord: parseInt(Y_Coord)
@@ -450,7 +443,7 @@ async function nodeDecision(X_Coord, Y_Coord) {
               AND Y_Coord BETWEEN (? - 5) AND (? + 5)
           ) AS node_exists;`;
     
-        con.query(query, [X_Coord, Y_Coord, X_Coord, Y_Coord], (err, result) => {
+        con.query(query, [X_Coord, X_Coord, Y_Coord, Y_Coord], (err, result) => {
             if (err) {
                 console.log(err);
             }
@@ -464,7 +457,10 @@ async function nodeDecision(X_Coord, Y_Coord) {
     
             if (nodeExists) {
                 const NID = result[0]['NID'];
-                resolve('exists');
+                previous.nid = NID;
+                previous.xcoord = X_Coord;
+                previous.ycoord = Y_Coord;
+                return resolve('exists');
                 // make func that takes NID and decides what to do : 1) If it has paths not mapped take them 2) Sends rover direction that would lead to that path
                 //  
                 // DO path linking and get NID
@@ -474,31 +470,28 @@ async function nodeDecision(X_Coord, Y_Coord) {
                         if (err) {
                             reject(err);
                         } 
-                        NID = await con.query('SELECT LAST_INSERT_ID();', (err, result) => {
-                            return new Promise((resolve, reject) => {
-                                if (err) return reject(err);
-                                else return resolve(result);
-                            });
-                        });
-                        if (previous.nid != null) 
-                        {
-                            con.query("INSERT INTO Paths (NID_1, NID_2, distance) VALUES (?, ?, ?)", 
-                            [NID, previous.nid, Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2) ], (err, result) => {
-                                if (err) {
-                                    reject(err);
-                                }
-                                console.log(`Inserted path of distance ${Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2)} into adjacency table\n`);
-                                previous.nid = result.insertId;
+                        con.query('SELECT LAST_INSERT_ID();', (err, result) => {
+                            NID = result[0]['LAST_INSERT_ID()'];
+                            console.log(`Current NID ${NID}, previous ${previous.nid}`);
+                            if (previous.nid != null) 
+                            {
+                                con.query("INSERT INTO Paths (NID_1, NID_2, distance) VALUES (?, ?, ?)", 
+                                [NID.toString(), previous.nid.toString(), Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2).toString() ], (err, result) => {
+                                    if (err) {
+                                        reject(err);
+                                    }
+                                    console.log(`Inserted path of distance ${Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2)} into adjacency table\n`);
+                                    previous.nid = NID;
+                                    previous.xcoord = X_Coord;
+                                    previous.ycoord = Y_Coord;
+                                    console.log()
+                                })
+                            } else {
+                                previous.nid = NID;
                                 previous.xcoord = X_Coord;
                                 previous.ycoord = Y_Coord;
-                                console.log()
-                            })
-                        } else {
-                            previous.nid = result.insertId;
-                            previous.xcoord = X_Coord;
-                            previous.ycoord = Y_Coord;
-                        }
-    
+                            }
+                        });
                 });
                 // 1) call function that gives paths --> asks ESP outgoing paths and their angle 
                 // 1a) Function call to insert the angle in the DB with approriate offset 
@@ -508,7 +501,7 @@ async function nodeDecision(X_Coord, Y_Coord) {
                 //                                           : No free ? Look one out, is there an unexplored edge --> YES: Go there 
                 //                                           : Repeat and when found make a list of nodes you have to traverse until you get to unexplored (routing table)
                 //                                           : Set heading to reach first node in that array and go there and when new request come in make sure you are at the set node IF not achieved start everything from scratch 
-                resolve('new node');
+                return resolve('new node');
             }
         });
     });
