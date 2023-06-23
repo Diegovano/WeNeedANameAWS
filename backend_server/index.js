@@ -436,31 +436,43 @@ let previous = {nid: null, xcoord: null, ycoord: null};
 
 async function nodeDecision(X_Coord, Y_Coord) {
     return new Promise((resolve, reject) => {
-        const query = `SELECT EXISTS (
-            SELECT 1
+        const query = `
+            SELECT Nodes.NID
             FROM Nodes
             WHERE X_Coord BETWEEN (? - 5) AND (? + 5)
-              AND Y_Coord BETWEEN (? - 5) AND (? + 5)
-          ) AS node_exists;`;
+              AND Y_Coord BETWEEN (? - 5) AND (? + 5)`;
     
         con.query(query, [X_Coord, X_Coord, Y_Coord, Y_Coord], (err, result) => {
             if (err) {
                 console.log(err);
             }
     
-            const nodeExists = result[0]['node_exists'] === 1;
+            // const nodeExists = result[0]['node_exists'];
+            const nodeExists = result.length;
             console.log(X_Coord, previous.xcoord, Y_Coord, previous.ycoord)
 
             console.log('Node exists:', nodeExists);
         
             
-    
             if (nodeExists) {
                 const NID = result[0]['NID'];
-                previous.nid = NID;
-                previous.xcoord = X_Coord;
-                previous.ycoord = Y_Coord;
-                return resolve('exists');
+                con.query("INSERT INTO Paths (NID_1, NID_2, distance) VALUES (?, ?, ?)", 
+                    [NID, previous.nid, Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2) ], (err, result) => {
+                        if (err) {
+                            reject(err);
+                        }
+                        console.log(`Inserted path of distance ${Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2)} into adjacency table\n`);
+                        previous.nid = NID;
+                        previous.xcoord = X_Coord;
+                        previous.ycoord = Y_Coord;
+                        console.log()
+                        dijkstra(1).then((resp)=> {
+                            console.log(`End node is ${resp.candidate}, path is ${JSON.stringify(resp.path)}`);
+                        }, err => {
+                            console.log(err.message);
+                        });
+                        return resolve('exists');
+                    })
                 // make func that takes NID and decides what to do : 1) If it has paths not mapped take them 2) Sends rover direction that would lead to that path
                 //  
                 // DO path linking and get NID
@@ -476,7 +488,7 @@ async function nodeDecision(X_Coord, Y_Coord) {
                             if (previous.nid != null) 
                             {
                                 con.query("INSERT INTO Paths (NID_1, NID_2, distance) VALUES (?, ?, ?)", 
-                                [NID.toString(), previous.nid.toString(), Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2).toString() ], (err, result) => {
+                                [NID, previous.nid, Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2) ], (err, result) => {
                                     if (err) {
                                         reject(err);
                                     }
@@ -485,12 +497,22 @@ async function nodeDecision(X_Coord, Y_Coord) {
                                     previous.xcoord = X_Coord;
                                     previous.ycoord = Y_Coord;
                                     console.log()
+                                    dijkstra(1).then((resp)=> {
+                                        console.log(`End node is ${resp.candidate}, path is ${JSON.stringify(resp.path)}`);
+                                    }, err => {
+                                        console.log(err.message);
+                                    });
                                 })
                             } else {
                                 previous.nid = NID;
                                 previous.xcoord = X_Coord;
                                 previous.ycoord = Y_Coord;
-                            }
+                                dijkstra(1).then((resp)=> {
+                                    console.log(`End node is ${resp.candidate}, path is ${JSON.stringify(resp.path)}`);
+                                }, err => {
+                                    console.log(err.message);
+                                });
+                                                        }
                         });
                 });
                 // 1) call function that gives paths --> asks ESP outgoing paths and their angle 
@@ -516,6 +538,8 @@ function getPaths(NID, myHeading) {
     // return roverAngles[]
 }
 
+
+// TO CHANGE HERE BECAUSE NO FIELD FOR ANGLE OR ANGLE IN NID
 function insertAngleInDB(roverAngles, NID, prevAngle) {
     const insertQuery = 'INSERT INTO Nodes (NID, Angle, Explored) VALUES (?, ?, ?)';
 
@@ -532,6 +556,130 @@ function insertAngleInDB(roverAngles, NID, prevAngle) {
             }
         });
     }
+}
+
+async function dijkstra(NID, isUnvisited = false) {
+    return new Promise((resolve, reject) => {
+        let nodes = new Set(); // contain all connected nodes
+        let weights = new Map();
+        let distances = new Map();
+        let adjacency = new Map();
+        let predecessor = new Map();
+        let shortest = new Map();
+        predecessor.set(NID, null);
+        con.query('SELECT * FROM Paths', async (err, result) => {
+            if(err || result.length == 0) {
+                if (result.length == 0) return reject(Error('No NODES!'))
+                return reject(err);
+            }
+            for (let i = 0 ; i < result.length ; i++){
+                let row = result[i];
+                let NID_1 = row.NID_1;
+                let NID_2 = row.NID_2;
+                let distance = row.Distance;
+                nodes.add(NID_1);
+                nodes.add(NID_2);
+                weights.set(JSON.stringify({a: NID_1, b: NID_2}), distance);
+                weights.set(JSON.stringify({a: NID_2, b: NID_1}), distance);
+                if (adjacency.has(NID_1)) {
+                    let existing = adjacency.get(NID_1);
+                    adjacency.set(NID_1, [...existing, {NID_2, distance}]);
+                } else {
+                    adjacency.set(NID_1, [{NID_2, distance}]);
+                }
+                if (adjacency.has(NID_2)) {
+                    let existing = adjacency.get(NID_2);
+                    adjacency.set(NID_2, [...existing, {NID_1, distance}]);
+                } else {
+                    adjacency.set(NID_2, [{NID_1, distance}]);
+                }
+
+            }
+            for(const node of nodes.values()) {
+                distances.set(node, node === NID ? 0 : Infinity);
+            }
+            while (distances.size > 0) {
+                let minimum = Infinity;
+                let bestNodeId = 0;
+                for(const [key, value] of distances.entries()) {
+                    if (value < minimum) {
+                        minimum = value;
+                        bestNodeId = parseInt(key);
+                    }
+                }
+                distances.delete(bestNodeId);
+                shortest.set(bestNodeId, minimum);
+
+                if (!adjacency.get(bestNodeId)) {
+                    throw Error('Problem with adjacency list!');
+                    reject(Error('Problem with adjacency list!'));
+                }
+
+                for(const [_key, next_vertex] of Object.entries(adjacency.get(bestNodeId))) {
+                    if (shortest.has(next_vertex.NID_1 || next_vertex.NID_2)) continue;
+                    let c = distances.has(next_vertex.NID_1 || next_vertex.NID_2) ? distances.get(next_vertex.NID_1 || next_vertex.NID_2) : Infinity;
+                    let e = minimum + weights.get(JSON.stringify({a: bestNodeId, b: next_vertex.NID_1 || next_vertex.NID_2}));
+                    if ( e < c ) {
+                        distances.set(next_vertex.NID_1 || next_vertex.NID_2, e);
+                        predecessor.set(next_vertex.NID_1 || next_vertex.NID_2, bestNodeId);
+                    }
+                }
+            }
+            let targetNodeId;
+    
+            if(isUnvisited) {
+                con.query('SELECT * FROM Nodes WHERE Explored = 0', (err, res) => {
+                    if (err) return reject(err);
+                    else {
+                        let shortest = Infinity;
+                        let candidate = null;
+                        for (const [key, val] of shortest.entries()) {
+                            if (res.includes(distances.get(key))) {
+                                if (shortest > val) {
+                                    candidate = key;
+                                    shortest = val;
+                                }
+                            }
+                        }
+                        if (candidate) 
+                        {
+                            let path = new Array();
+                            let next = parseInt(candidate);
+                            while(predecessor.get(next) != NID) {
+                                path.push(predecessor.get(next));
+                                next = parseInt(predecessor.get(next));
+                            }
+                            path.push(NID);
+                            return resolve(candidate, path);
+                        } else {
+                            console.log("FINISHED??");
+                        }
+                    }
+                });
+            } else {
+                let longest = 0;
+                let candidate = null;
+                for (const [key, val] of shortest.entries()) {
+                    if (longest < val && val != Infinity) { // disconnected node
+                        candidate = key;
+                        longest = val;
+                    }
+                }
+                if (candidate)
+                {
+                    let path = new Array();
+                    let next = parseInt(candidate);
+                    while(predecessor.get(next) != NID) {
+                        path.push(predecessor.get(next));
+                        next = parseInt(predecessor.get(next));
+                    }
+                    path.push(NID);
+                    return resolve({candidate, path});
+                }
+            }
+        });
+
+    });
 }
 
 function chooseNextPath(NID, Heading) {
@@ -563,7 +711,7 @@ function chooseNextPath(NID, Heading) {
               console.log(err);
             } else {
               if (result.length > 0) {
-                // DO FUCKING DIJKSTRA
+                dijkstra(result[0]);
 
 
                 // Unexplored neighboring node found, choose the first available node
@@ -618,11 +766,11 @@ app.listen(PORT, () => {
 const stdin = process.stdin;
 
 // without this, we would only get streams once enter is pressed
-stdin.setRawMode( true );
+// stdin.setRawMode( true );
 
 // resume stdin in the parent process (node app won't quit all by itself
 // unless an error or process.exit() happens)
-stdin.resume();
+// stdin.resume();
 
 // i don't want binary, do you?
 stdin.setEncoding( 'utf8' );
@@ -632,6 +780,14 @@ stdin.on( 'data', function( key ){
   // ctrl-c ( end of text )
   if ( key === '\u0003' ) {
     process.exit();
+  }
+  
+  if ( key === 'd') {
+    dijkstra(1).then((resp)=> {
+        console.log(`End node is ${resp.candidate}, path is ${JSON.stringify(resp.path)}`);
+    }, err => {
+        console.log(err.message);
+    });
   }
   // write the key to stdout all normal like
   wss.clients.forEach(function each(client) {
