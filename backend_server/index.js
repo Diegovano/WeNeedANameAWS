@@ -197,7 +197,7 @@ app.post("/api/receiveBlue", (req, res) => {
     setTimeout(() => {
         blueState = false;
         console.log("Blue beacon is off");
-    }, 3000);
+    }, 6000);
     res.sendStatus(200);
 });
 
@@ -210,7 +210,7 @@ app.post("/api/receiveRed", (req, res) => {
     setTimeout(() => {
         redState = false;
         console.log("Red beacon is off");
-    }, 3000);
+    }, 6000);
     res.sendStatus(200);
 });
 
@@ -223,7 +223,7 @@ app.post("/api/receiveYellow", (req, res) => {
     setTimeout(() => {
         yellowState = false;
         console.log("Yellow beacon is off");
-    }, 3000);
+    }, 6000);
     res.sendStatus(200);
 });
 
