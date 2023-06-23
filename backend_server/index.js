@@ -51,11 +51,11 @@ var con = mysql.createConnection(
     });
 con.connect(function (err) {
     if (err) {
-      console.log("Successfully failed to connect to the database...\n");
-      throw err;
+        console.log("Successfully failed to connect to the database...\n");
+        throw err;
     }
     else {
-      console.log("Successfully connected to the database...\n");
+        console.log("Successfully connected to the database...\n");
     }
 });
 
@@ -66,11 +66,23 @@ app.get("/mazeQuery", (_req, res) => {
     });
 });
 
+app.get("/adjacencyTable", (req, res) => {
+    con.query("SELECT * FROM Paths", function (err, result, fields) {
+        if (err) throw err;
+        res.json(result)
+    });
+});
+
 // Test endpoint 
 app.get("/testQuery", (req, res) => {
     console.log("GET request received");
     const X_Coord = req.query.X_Coord;
     const Y_Coord = req.query.Y_Coord;
+    nodeDecision(X_Coord, Y_Coord).then((msg) => {
+        console.log(`node decision ${msg}\n`);
+    }, err => {
+        console.log(err.message);
+    });
     con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
         [X_Coord, Y_Coord], (err, _result) => {
             if (err) {
@@ -78,6 +90,7 @@ app.get("/testQuery", (req, res) => {
             }
 
         });
+    
     const responseData = {
         X_Coord: parseInt(X_Coord),
         Y_Coord: parseInt(Y_Coord)
@@ -91,11 +104,14 @@ app.get("/api/truncate", (_req, _res) => {
         if (err) throw err;
     })
     con.query("TRUNCATE TABLE Positions", (err, _result) => {
-	if (err) throw err;
-   }) 
-   con.query("TRUNCATE TABLE Display", (err, _result) => {
-    if (err) throw err;
-   })
+        if (err) throw err;
+    })
+    con.query("TRUNCATE TABLE Display", (err, _result) => {
+        if (err) throw err;
+    })
+    con.query("TRUNCATE TABLE Paths", (err, _result) => {
+        if (err) throw err;
+    })
 });
 
 
@@ -127,7 +143,7 @@ app.get("/LDR", (req, res) => {
     let F = req.query.F; // Forward 
     let FR = req.query.FR; // Forward Left 
     let FL = req.query.FL; // Forward Right
-}); 
+});
 
 // Keep track of motor position
 let rover_X = 0, rover_Y = 0, rover_H = 0, dist = 0, delta_H = 0;
@@ -137,16 +153,16 @@ app.post("/api/motor", (req, res) => {
     let JSONArray = req.body;
     console.log(req.body);
     res.sendStatus(200);
-    for (var object in JSONArray){
-        if (JSONArray[object]["type"] == 'distance'){
-	    console.log("DISTANCE")
+    for (var object in JSONArray) {
+        if (JSONArray[object]["type"] == 'distance') {
+            console.log("DISTANCE")
             dist = JSONArray[object]["value"];
             let deltaX = Math.sin((rover_H)) * dist;
             let deltaY = Math.cos((rover_H)) * dist;
             rover_X += deltaX;
             rover_Y += deltaY;
             console.log("Rover moved %f cm, x by %f, y by %f", dist.toFixed(2), deltaX.toFixed(2), deltaY.toFixed(2));
-        } else if (JSONArray[object]["type"] == 'angle'){
+        } else if (JSONArray[object]["type"] == 'angle') {
             console.log("ANGLE")
             delta_H = JSONArray[object]["value"];
             rover_H += delta_H;
@@ -155,19 +171,19 @@ app.post("/api/motor", (req, res) => {
 
         console.log("New Rover position: X %f, Y %f, H %f", rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2));
 
-        con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)", 
+        con.query("INSERT INTO Display (X_Coord, Y_Coord, Steps, Heading) VALUES (?, ?, ?, ?)",
             [rover_X, rover_Y, dist.toFixed(2), delta_H.toFixed(2)], (err, _result) => {
                 if (err) {
                     console.log(err);
                 }
-        });
+            });
 
         con.query("INSERT INTO Positions (X_Coord, Y_Coord, Heading) VALUES (?, ?, ?)",
-        [rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2)], (err, _result) => {
-            if (err) {
-                console.log(err)
-            }
-        });
+            [rover_X.toFixed(2), rover_Y.toFixed(2), rover_H.toFixed(2)], (err, _result) => {
+                if (err) {
+                    console.log(err)
+                }
+            });
 
     };
 })
@@ -179,45 +195,45 @@ app.get("/estimateMazeQuery", (_req, res) => {
     });
 });
 
-  let blueState = false;
-  app.get("/api/blueBeacon", (req, res) => {
+let blueState = false;
+app.get("/api/blueBeacon", (req, res) => {
     res.json({ blueBeacon: blueState });
-  });
-  app.post("/api/receiveBlue", (req, res) => {
+});
+app.post("/api/receiveBlue", (req, res) => {
     blueState = true;
     setTimeout(() => {
-      blueState = false;
-      console.log("Blue beacon is off");
-    }, 7000);
+        blueState = false;
+        console.log("Blue beacon is off");
+    }, 3000);
     res.sendStatus(200);
-  });
+});
 
-  let redState = false;
-  app.get("/api/redBeacon", (req, res) => {
+let redState = false;
+app.get("/api/redBeacon", (req, res) => {
     res.json({ redBeacon: redState });
-  });
-  app.post("/api/receiveRed", (req, res) => {
+});
+app.post("/api/receiveRed", (req, res) => {
     redState = true;
     setTimeout(() => {
-      redState = false;
-      console.log("Red beacon is off");
-    }, 7000);
+        redState = false;
+        console.log("Red beacon is off");
+    }, 3000);
     res.sendStatus(200);
-  });
+});
 
-  let yellowState = false;
-  app.get("/api/yellowBeacon", (req, res) => {
+let yellowState = false;
+app.get("/api/yellowBeacon", (req, res) => {
     res.json({ yellowBeacon: yellowState });
-  });
-  app.post("/api/receiveYellow", (req, res) => {
+});
+app.post("/api/receiveYellow", (req, res) => {
     yellowState = true;
     setTimeout(() => {
-      yellowState = false;
-      console.log("Yellow beacon is off");
-    }, 7000);
+        yellowState = false;
+        console.log("Yellow beacon is off");
+    }, 3000);
     res.sendStatus(200);
-  });
-  
+});
+
 
 
 // ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -412,14 +428,6 @@ app.get('/beacon', (req, res) => {
     let X_Coord = parseInt((currentPosition.x));
     let Y_Coord = parseInt((currentPosition.y));
 
-    
-    con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
-        [X_Coord, Y_Coord], (err, _result) => {
-            if (err) {
-                console.log(err)
-            }
-
-        });
 
     const responseData = {
         X: X_Coord,
@@ -427,10 +435,179 @@ app.get('/beacon', (req, res) => {
     };
 
     res.json(responseData);
+
+    // Go down in state logic 
+    nodeDecision(X_Coord, Y_Coord);
 });
+let previous = {nid: null, xcoord: null, ycoord: null};
+
+async function nodeDecision(X_Coord, Y_Coord) {
+    return new Promise((resolve, reject) => {
+        const query = `SELECT EXISTS (
+            SELECT 1
+            FROM Nodes
+            WHERE X_Coord BETWEEN (? - 5) AND (? + 5)
+              AND Y_Coord BETWEEN (? - 5) AND (? + 5)
+          ) AS node_exists;`;
+    
+        con.query(query, [X_Coord, Y_Coord, X_Coord, Y_Coord], (err, result) => {
+            if (err) {
+                console.log(err);
+            }
+    
+            const nodeExists = result[0]['node_exists'] === 1;
+            console.log(X_Coord, previous.xcoord, Y_Coord, previous.ycoord)
+
+            console.log('Node exists:', nodeExists);
+        
+            
+    
+            if (nodeExists) {
+                const NID = result[0]['NID'];
+                resolve('exists');
+                // make func that takes NID and decides what to do : 1) If it has paths not mapped take them 2) Sends rover direction that would lead to that path
+                //  
+                // DO path linking and get NID
+            } else {
+                con.query("INSERT INTO Nodes (X_Coord, Y_Coord) VALUES (?,?)",
+                    [X_Coord, Y_Coord], async (err, result) => {
+                        if (err) {
+                            reject(err);
+                        } 
+                        NID = await con.query('SELECT LAST_INSERT_ID();', (err, result) => {
+                            return new Promise((resolve, reject) => {
+                                if (err) return reject(err);
+                                else return resolve(result);
+                            });
+                        });
+                        if (previous.nid != null) 
+                        {
+                            con.query("INSERT INTO Paths (NID_1, NID_2, distance) VALUES (?, ?, ?)", 
+                            [NID, previous.nid, Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2) ], (err, result) => {
+                                if (err) {
+                                    reject(err);
+                                }
+                                console.log(`Inserted path of distance ${Math.sqrt((X_Coord - previous.xcoord) ** 2 + (Y_Coord - previous.ycoord) ** 2)} into adjacency table\n`);
+                                previous.nid = result.insertId;
+                                previous.xcoord = X_Coord;
+                                previous.ycoord = Y_Coord;
+                                console.log()
+                            })
+                        } else {
+                            previous.nid = result.insertId;
+                            previous.xcoord = X_Coord;
+                            previous.ycoord = Y_Coord;
+                        }
+    
+                });
+                // 1) call function that gives paths --> asks ESP outgoing paths and their angle 
+                // 1a) Function call to insert the angle in the DB with approriate offset 
+                // 1b) Set the one you came from (-180 deg) as explored (1)
+                // 2) Call the generic function choose next path algorithm --> Youre in a node 
+                // 2a) Takes NID and heading and figures out : unexplored path ? Turn and set the chosen as explored and tell ESP to turn there
+                //                                           : No free ? Look one out, is there an unexplored edge --> YES: Go there 
+                //                                           : Repeat and when found make a list of nodes you have to traverse until you get to unexplored (routing table)
+                //                                           : Set heading to reach first node in that array and go there and when new request come in make sure you are at the set node IF not achieved start everything from scratch 
+                resolve('new node');
+            }
+        });
+    });
+}
+
+
+// Helper funcitons: 
+function getPaths(NID, myHeading) {
+    // is this what diego is doing? 
+    // if yes then read from endpoint the absolute angles 
+    // Offset the angles by doing angle - myHeading = angle rover needs to take to turn in the correct direction 
+    // return roverAngles[]
+}
+
+function insertAngleInDB(roverAngles, NID, prevAngle) {
+    const insertQuery = 'INSERT INTO Nodes (NID, Angle, Explored) VALUES (?, ?, ?)';
+
+    for (let i = 0; i < roverAngles.length; i++) {
+        const angle = roverAngles[i];
+        // Setting the one we came from as explored
+        const isExplored = angle === prevAngle ? 1 : 0;
+
+        con.query(insertQuery, [NID, angle, isExplored], (err, result) => {
+            if (err) {
+                console.log(err);
+            } else {
+                console.log(`Angle ${angle} inserted successfully for NID ${NID}`);
+            }
+        });
+    }
+}
+
+function chooseNextPath(NID, Heading) {
+    // Check if there is an unexplored path from the current node
+    con.query('SELECT Angle FROM Nodes WHERE NID = ? AND Explored = 0', [NID], (err, result) => {
+      if (err) {
+        console.log(err);
+      } else {
+        if (result.length > 0) {
+          // Unexplored path found, choose the first available angle
+          const nextAngle = result[0].Angle;
+          console.log('Next angle:', nextAngle);
+          
+          // Set the chosen path as explored
+          con.query('UPDATE Nodes SET Explored = 1 WHERE NID = ? AND Angle = ?', [NID, nextAngle], (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              console.log(`Angle ${nextAngle} marked as explored for NID ${NID}`);
+              
+              // Tell ESP to turn to the chosen angle
+              // (Code for ESP communication goes here)
+            }
+          });
+        } else {
+          // No unexplored path, look for a neighboring node with an unexplored edge
+          con.query('SELECT NID FROM Nodes WHERE NID != ? AND Explored = 0', [NID], (err, result) => {
+            if (err) {
+              console.log(err);
+            } else {
+              if (result.length > 0) {
+                // DO FUCKING DIJKSTRA
+
+
+                // Unexplored neighboring node found, choose the first available node
+                const nextNodeID = result[0].NID;
+                console.log('Next node:', nextNodeID);
+                
+                // Calculate the heading to reach the next node
+                // Don't know how to do this ... 
+                // const nextHeading = calculateHeading(NID, nextNodeID);
+                console.log('Next heading:', nextHeading);
+                
+                // Update the heading of the current node
+                con.query('UPDATE Nodes SET Heading = ? WHERE NID = ?', [nextHeading, NID], (err, result) => {
+                  if (err) {
+                    console.log(err);
+                  } else {
+                    console.log(`Heading updated to ${nextHeading} for NID ${NID}`);
+                    
+                    // Move to the next node
+                    // Tell ESP to moveToNode(nextNodeID);
+                  }
+                });
+              } else {
+                // No unexplored path or neighboring node, exploration complete
+                console.log('Exploration complete!');
+              }
+            }
+          });
+        }
+      }
+    });
+  }
+  
+
 
 app.get("/Display", (_req, res) => {
-    con.query("SELECT * FROM Display", function(err, result, _fields) {
+    con.query("SELECT * FROM Display", function (err, result, _fields) {
         if (err) throw err;
         res.json(result)
     });
